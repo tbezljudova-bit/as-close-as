@@ -48,10 +48,21 @@ export function allCityPoints(): FeatureCollection<Point> {
   return cityPointCache;
 }
 
-export function buildMatchPoints(matches: Match[]): FeatureCollection<Point> {
+export function buildMatchPoints(
+  matches: Match[],
+  selectedId: number | null,
+): FeatureCollection<Point> {
   return {
     type: "FeatureCollection",
-    features: matches.map((match) => cityPoint(match.city)),
+    features: matches.map((match) => {
+      const point = cityPoint(match.city);
+      point.properties = {
+        ...point.properties,
+        picked: match.city.id === selectedId ? 1 : 0,
+        muted: selectedId != null && match.city.id !== selectedId ? 1 : 0,
+      };
+      return point;
+    }),
   };
 }
 
@@ -102,11 +113,12 @@ export function buildArcFeatures(
   const arrows: Feature<Point>[] = [];
   for (const match of matches) {
     const selected = match.city.id === selectedId ? 1 : 0;
+    const muted = selectedId != null && selected === 0 ? 1 : 0;
     const parts = arcLines(origin, match.city, 48);
     if (parts.length > 0) {
       lines.push({
         type: "Feature",
-        properties: { id: match.city.id, selected },
+        properties: { id: match.city.id, selected, muted },
         geometry: { type: "MultiLineString", coordinates: parts },
       });
     }
@@ -116,6 +128,7 @@ export function buildArcFeatures(
       properties: {
         id: match.city.id,
         selected,
+        muted,
         bearing: arrow.bearing,
       },
       geometry: { type: "Point", coordinates: [arrow.lon, arrow.lat] },

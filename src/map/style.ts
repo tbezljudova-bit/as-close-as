@@ -172,10 +172,22 @@ export const baseStyle = {
       type: "circle",
       source: "matches",
       paint: {
-        "circle-color": "#ffc56a",
-        "circle-radius": 14,
+        "circle-color": [
+          "case",
+          ["==", ["get", "muted"], 1],
+          "#5e584e",
+          "#ffc56a",
+        ],
+        "circle-radius": ["case", ["==", ["get", "muted"], 1], 5, 14],
         "circle-blur": 0.82,
-        "circle-opacity": 0.46,
+        "circle-opacity": [
+          "case",
+          ["==", ["get", "picked"], 1],
+          0,
+          ["==", ["get", "muted"], 1],
+          0.05,
+          0.46,
+        ],
       },
     },
     {
@@ -183,11 +195,28 @@ export const baseStyle = {
       type: "circle",
       source: "matches",
       paint: {
-        "circle-color": "#fff6e4",
-        "circle-radius": ["interpolate", ["linear"], ["zoom"], 1.5, 2.8, 4.5, 4.2],
-        "circle-stroke-color": "#ffb03a",
-        "circle-stroke-width": 1.2,
-        "circle-opacity": 1,
+        "circle-color": [
+          "case",
+          ["==", ["get", "muted"], 1],
+          "#8a8174",
+          "#fff6e4",
+        ],
+        "circle-radius": ["case", ["==", ["get", "muted"], 1], 1.6, 3.6],
+        "circle-stroke-color": [
+          "case",
+          ["==", ["get", "muted"], 1],
+          "#4e483f",
+          "#ffb03a",
+        ],
+        "circle-stroke-width": ["case", ["==", ["get", "muted"], 1], 0.6, 1.2],
+        "circle-opacity": [
+          "case",
+          ["==", ["get", "picked"], 1],
+          0,
+          ["==", ["get", "muted"], 1],
+          0.34,
+          1,
+        ],
       },
     },
   ],
@@ -251,6 +280,16 @@ export function decorateMap(map: MapLibreMap): void {
       "icon-rotation-alignment": "map",
       "icon-allow-overlap": true,
       "icon-ignore-placement": true,
+    },
+    paint: {
+      "icon-opacity": [
+        "case",
+        ["==", ["get", "selected"], 1],
+        1,
+        ["==", ["get", "muted"], 1],
+        0.16,
+        0.9,
+      ],
     },
   });
 }

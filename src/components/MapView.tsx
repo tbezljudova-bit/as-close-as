@@ -179,9 +179,18 @@ export function MapView({
     const arcs = buildArcFeatures(origin, lined, selected?.city.id ?? null);
     setGeo(map, "arcs", arcs.lines);
     setGeo(map, "arrows", arcs.arrows);
-    setGeo(map, "matches", buildMatchPoints(matches));
+    setGeo(map, "matches", buildMatchPoints(matches, selected?.city.id ?? null));
     if (map.getLayer("arcs")) {
-      map.setPaintProperty("arcs", "line-opacity", selected ? 0.16 : 0.62);
+      map.setPaintProperty("arcs", "line-opacity", selected ? 0.08 : 0.62);
+    }
+    if (map.getLayer("cities-dim")) {
+      map.setPaintProperty("cities-dim", "circle-opacity", selected ? 0.14 : 0.42);
+    }
+    if (map.getLayer("ring-main")) {
+      map.setPaintProperty("ring-main", "line-opacity", selected ? 0.42 : 0.96);
+    }
+    if (map.getLayer("ring-band")) {
+      map.setPaintProperty("ring-band", "line-opacity", selected ? 0.18 : 0.55);
     }
     const hidden = [origin.id];
     if (showTarget && target) hidden.push(target.id);
@@ -210,18 +219,30 @@ export function MapView({
     const map = mapRef.current;
     if (!map) return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const paintGlow = (wave: number) => {
+      if (!map.getLayer("match-glow")) return;
+      map.setPaintProperty("match-glow", "circle-opacity", [
+        "case",
+        ["==", ["get", "picked"], 1],
+        0,
+        ["==", ["get", "muted"], 1],
+        0.05,
+        0.28 + wave * 0.36,
+      ]);
+      map.setPaintProperty("match-glow", "circle-radius", [
+        "case",
+        ["==", ["get", "muted"], 1],
+        4,
+        11 + wave * 6,
+      ]);
+    };
     if (reduce) {
-      map.setPaintProperty("match-glow", "circle-opacity", 0.5);
-      map.setPaintProperty("match-glow", "circle-radius", 14);
+      paintGlow(0.5);
       return;
     }
     let frame = 0;
     const tick = (now: number) => {
-      if (!document.hidden && map.getLayer("match-glow")) {
-        const wave = 0.5 + 0.5 * Math.sin(now / 620);
-        map.setPaintProperty("match-glow", "circle-opacity", 0.3 + wave * 0.34);
-        map.setPaintProperty("match-glow", "circle-radius", 12 + wave * 5);
-      }
+      if (!document.hidden) paintGlow(0.5 + 0.5 * Math.sin(now / 620));
       frame = requestAnimationFrame(tick);
     };
     frame = requestAnimationFrame(tick);
@@ -251,7 +272,7 @@ export function MapView({
     const width = map.getContainer().clientWidth;
     const height = map.getContainer().clientHeight;
     const targetX = Math.min(width - 56, Math.max(56, point.x));
-    const targetY = Math.min(height - 80, Math.max(300, point.y));
+    const targetY = Math.min(height - 80, Math.max(340, point.y));
     if (Math.abs(targetX - point.x) < 2 && Math.abs(targetY - point.y) < 2) return;
     const center = map.project(map.getCenter());
     const next = map.unproject([
@@ -269,12 +290,18 @@ export function MapView({
     }
     const update = () => {
       const projected = map.project([selected.city.lon, selected.city.lat]);
+      const originPoint = map.project([origin.lon, origin.lat]);
       const width = map.getContainer().clientWidth;
       const cardHalf = 120;
       let shift = 0;
       if (projected.x < cardHalf + 16) shift = cardHalf + 16 - projected.x;
       if (projected.x > width - cardHalf - 16) {
         shift = width - cardHalf - 16 - projected.x;
+      }
+      const aboveOrigin =
+        originPoint.y < projected.y - 36 && originPoint.y > projected.y - 280;
+      if (aboveOrigin && Math.abs(originPoint.x - projected.x) < 150 && Math.abs(shift) < 48) {
+        shift = originPoint.x >= projected.x ? -160 : 160;
       }
       setScreen({ x: projected.x, y: projected.y, shift });
     };
@@ -285,7 +312,7 @@ export function MapView({
       map.off("move", update);
       map.off("resize", update);
     };
-  }, [ready, selected]);
+  }, [ready, selected, origin]);
 
   return (
     <section className="stage" aria-label="Equal-distance map">

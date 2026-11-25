@@ -297,6 +297,14 @@ h1 {
   box-shadow: inset 2px 0 0 var(--color-gold);
 }
 
+.city-list:has(.is-selected) .city-row:not(.is-selected) {
+  opacity: 0.38;
+}
+
+.city-list:has(.is-selected) .city-row:not(.is-selected):hover {
+  opacity: 0.72;
+}
+
 .city-row:focus-visible {
   outline: 2px solid var(--color-gold);
   outline-offset: -2px;
@@ -477,6 +485,11 @@ h1 {
   align-items: center;
 }
 
+.rise-card-shift {
+  width: max-content;
+  max-width: 230px;
+}
+
 .rise-card {
   width: max-content;
   max-width: 230px;
@@ -538,7 +551,7 @@ h1 {
 
 .rise-stem {
   width: 2px;
-  height: 92px;
+  height: 128px;
   background: linear-gradient(to bottom, rgba(255, 220, 170, 0.95), rgba(255, 220, 170, 0));
   box-shadow: 0 0 8px rgba(255, 186, 90, 0.35);
   transform-origin: bottom center;
@@ -619,7 +632,7 @@ h1 {
     height: 0;
   }
   to {
-    height: 92px;
+    height: 128px;
   }
 }
 
