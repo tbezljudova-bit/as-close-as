@@ -1,0 +1,7 @@
+City coordinates, names, and population are a trimmed subset of GeoNames cities15000.
+Kept rows: population of 50,000 or more, every national capital, and first-order
+administrative capitals of 20,000 people or more. City sections and localities
+(GeoNames PPLX and PPLL) are left out so districts do not double-count a city.
+Source: https://www.geonames.org/
+License: Creative Commons Attribution 4.0 (CC BY 4.0)
+https://creativecommons.org/licenses/by/4.0/
