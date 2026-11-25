@@ -5,7 +5,7 @@ import {
   Marker,
   ScaleControl,
 } from "maplibre-gl";
-import type { FilterSpecification } from "maplibre-gl";
+import type { ExpressionSpecification, FilterSpecification } from "maplibre-gl";
 import {
   buildArcFeatures,
   buildMatchPoints,
@@ -14,6 +14,7 @@ import {
 import { boundsForRing } from "../lib/geo";
 import { matchesForLines } from "../lib/match";
 import type { City, LatLon, Match, ProjectionMode, Unit } from "../lib/types";
+import { MAP_GLOW, cityHalo } from "../map/glow";
 import { baseStyle, decorateMap, setGeo } from "../map/style";
 import { RiseCard } from "./RiseCard";
 import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
@@ -154,11 +155,11 @@ export function MapView({
     map.setRenderWorldCopies(projection === "flat");
     if (projection === "globe") {
       map.setSky({
-        "sky-color": "#05080c",
-        "horizon-color": "#1b394c",
-        "fog-color": "#0c1822",
-        "sky-horizon-blend": 0.55,
-        "atmosphere-blend": 0.7,
+        "sky-color": "#0B0C0E",
+        "horizon-color": "#15171B",
+        "fog-color": "#0B0C0E",
+        "sky-horizon-blend": 0.12,
+        "atmosphere-blend": MAP_GLOW ? 0.22 : 0,
       });
     }
     const animate = fitted.current;
@@ -181,16 +182,10 @@ export function MapView({
     setGeo(map, "arrows", arcs.arrows);
     setGeo(map, "matches", buildMatchPoints(matches, selected?.city.id ?? null));
     if (map.getLayer("arcs")) {
-      map.setPaintProperty("arcs", "line-opacity", selected ? 0.08 : 0.62);
+      map.setPaintProperty("arcs", "line-opacity", selected ? 0.16 : 0.55);
     }
     if (map.getLayer("cities-dim")) {
-      map.setPaintProperty("cities-dim", "circle-opacity", selected ? 0.14 : 0.42);
-    }
-    if (map.getLayer("ring-main")) {
-      map.setPaintProperty("ring-main", "line-opacity", selected ? 0.42 : 0.96);
-    }
-    if (map.getLayer("ring-band")) {
-      map.setPaintProperty("ring-band", "line-opacity", selected ? 0.18 : 0.55);
+      map.setPaintProperty("cities-dim", "circle-opacity", selected ? 0.18 : 0.55);
     }
     const hidden = [origin.id];
     if (showTarget && target) hidden.push(target.id);
@@ -215,26 +210,32 @@ export function MapView({
   }, [ready]);
 
   useEffect(() => {
-    if (!ready) return;
+    if (!ready || !MAP_GLOW) return;
     const map = mapRef.current;
     if (!map) return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const paintGlow = (wave: number) => {
       if (!map.getLayer("match-glow")) return;
-      map.setPaintProperty("match-glow", "circle-opacity", [
-        "case",
-        ["==", ["get", "picked"], 1],
-        0,
-        ["==", ["get", "muted"], 1],
-        0.05,
-        0.28 + wave * 0.36,
-      ]);
-      map.setPaintProperty("match-glow", "circle-radius", [
-        "case",
-        ["==", ["get", "muted"], 1],
-        4,
-        11 + wave * 6,
-      ]);
+      map.setPaintProperty(
+        "match-glow",
+        "circle-opacity",
+        [
+          "case",
+          ["any", ["==", ["get", "muted"], 1], ["==", ["get", "picked"], 1]],
+          0,
+          cityHalo.opacity * (0.75 + wave * 0.25),
+        ] as ExpressionSpecification,
+      );
+      map.setPaintProperty(
+        "match-glow",
+        "circle-radius",
+        [
+          "case",
+          ["any", ["==", ["get", "muted"], 1], ["==", ["get", "picked"], 1]],
+          0,
+          cityHalo.radius + wave * 1.2,
+        ] as ExpressionSpecification,
+      );
     };
     if (reduce) {
       paintGlow(0.5);
@@ -242,7 +243,7 @@ export function MapView({
     }
     let frame = 0;
     const tick = (now: number) => {
-      if (!document.hidden) paintGlow(0.5 + 0.5 * Math.sin(now / 620));
+      if (!document.hidden) paintGlow(0.5 + 0.5 * Math.sin(now / 900));
       frame = requestAnimationFrame(tick);
     };
     frame = requestAnimationFrame(tick);

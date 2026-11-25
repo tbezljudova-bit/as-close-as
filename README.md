@@ -8,7 +8,7 @@ The flat map is the main view. A globe sits beside it, for when you want the sam
 
 ![Dark map of the Tallinn to Yerevan ring](docs/screenshots/dark-map.png)
 
-![Barcelona rises off the ring](docs/screenshots/rise.gif)
+![Barcelona rises off the ring](docs/screenshots/city-rise.png)
 
 ![The same ring on the globe](docs/screenshots/globe.png)
 
@@ -22,7 +22,7 @@ The ring in this app is not an oval drawn on the map. It is a set of points that
 
 The earth is treated as a sphere with radius 6,371 km. The distance between two cities is the great-circle distance (the haversine formula): the shortest path along the surface, not a straight line through the planet and not a ruler line on the map.
 
-The ring is that path spun all the way around the origin. A city matches when its own great-circle distance is within the tolerance of the target distance. The default tolerance is ±3%, and you can widen or narrow it. The sentence, the list, and the glowing markers all come from that same calculation. Nothing is hard-coded. Tallinn to Yerevan comes out to about 2,547 km, and 106 cities in this set fall inside ±3% of that.
+The ring is that path spun all the way around the origin. A city matches when its own great-circle distance is within the tolerance of the target distance. The default tolerance is ±3%, and you can widen or narrow it. The sentence, the list, and the lit markers all come from that same calculation. Nothing is hard-coded. Tallinn to Yerevan comes out to about 2,547 km, and 106 cities in this set fall inside ±3% of that.
 
 Distances can be shown in kilometres or miles. Sorting is by population, or by how close a city sits to the exact radius.
 

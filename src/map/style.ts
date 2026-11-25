@@ -10,6 +10,7 @@ import {
   buildGraticule,
 } from "../lib/features";
 import { countryFeatures } from "../lib/world";
+import { ACCENT, cityHalo, lineHalo } from "./glow";
 
 export const baseStyle = {
   version: 8,
@@ -26,16 +27,16 @@ export const baseStyle = {
     {
       id: "background",
       type: "background",
-      paint: { "background-color": "#071018" },
+      paint: { "background-color": "#0B0C0E" },
     },
     {
       id: "graticule",
       type: "line",
       source: "graticule",
       paint: {
-        "line-color": "#1b303c",
-        "line-width": 0.7,
-        "line-opacity": 0.8,
+        "line-color": "#222428",
+        "line-width": 1,
+        "line-opacity": 0.7,
       },
     },
     {
@@ -43,23 +44,7 @@ export const baseStyle = {
       type: "fill",
       source: "countries",
       paint: {
-        "fill-color": [
-          "case",
-          ["==", ["get", "tone"], 1],
-          "#18242d",
-          "#141c24",
-        ],
-      },
-    },
-    {
-      id: "coast-glow",
-      type: "line",
-      source: "countries",
-      paint: {
-        "line-color": "#8eb4c8",
-        "line-width": 2.2,
-        "line-blur": 1.2,
-        "line-opacity": 0.22,
+        "fill-color": "#15171B",
       },
     },
     {
@@ -67,9 +52,10 @@ export const baseStyle = {
       type: "line",
       source: "countries",
       paint: {
-        "line-color": "#3c5566",
-        "line-width": 0.7,
-        "line-opacity": 0.9,
+        "line-color": "#2A2D33",
+        "line-width": 1,
+        "line-opacity": 1,
+        "line-blur": 0,
       },
     },
     {
@@ -77,18 +63,17 @@ export const baseStyle = {
       type: "circle",
       source: "cities",
       paint: {
-        "circle-color": "#93a8b8",
-        "circle-opacity": 0.42,
+        "circle-color": "#5C616A",
+        "circle-opacity": 0.55,
+        "circle-blur": 0,
         "circle-radius": [
           "interpolate",
           ["linear"],
           ["zoom"],
           1,
           1.15,
-          3,
-          1.8,
-          5.5,
-          2.8,
+          4,
+          1.7,
         ],
       },
     },
@@ -99,10 +84,11 @@ export const baseStyle = {
       filter: ["!=", ["get", "kind"], "main"],
       layout: { "line-cap": "round", "line-join": "round" },
       paint: {
-        "line-color": "#ff8d72",
+        "line-color": "#2A2D33",
         "line-width": 1,
-        "line-opacity": 0.55,
-        "line-dasharray": [1.2, 1.5],
+        "line-opacity": 1,
+        "line-blur": 0,
+        "line-dasharray": [1.5, 1.5],
       },
     },
     {
@@ -112,10 +98,10 @@ export const baseStyle = {
       filter: ["==", ["get", "kind"], "main"],
       layout: { "line-cap": "round", "line-join": "round" },
       paint: {
-        "line-color": "#3a120d",
-        "line-width": 5,
-        "line-opacity": 0.7,
-        "line-blur": 0.3,
+        "line-color": ACCENT,
+        "line-width": lineHalo.width,
+        "line-opacity": lineHalo.opacity,
+        "line-blur": lineHalo.blur,
       },
     },
     {
@@ -125,9 +111,10 @@ export const baseStyle = {
       filter: ["==", ["get", "kind"], "main"],
       layout: { "line-cap": "round", "line-join": "round" },
       paint: {
-        "line-color": "#ff5c3a",
-        "line-width": 2.15,
-        "line-opacity": 0.96,
+        "line-color": ACCENT,
+        "line-width": 1.25,
+        "line-opacity": 1,
+        "line-blur": 0,
       },
     },
     {
@@ -137,9 +124,10 @@ export const baseStyle = {
       filter: ["==", ["get", "selected"], 0],
       layout: { "line-cap": "round", "line-join": "round" },
       paint: {
-        "line-color": "#e3a56c",
-        "line-width": 1.15,
-        "line-opacity": 0.62,
+        "line-color": "#4A4E56",
+        "line-width": 1,
+        "line-opacity": 0.55,
+        "line-blur": 0,
       },
     },
     {
@@ -149,10 +137,10 @@ export const baseStyle = {
       filter: ["==", ["get", "selected"], 1],
       layout: { "line-cap": "round", "line-join": "round" },
       paint: {
-        "line-color": "#ffbf70",
-        "line-width": 8,
-        "line-opacity": 0.38,
-        "line-blur": 2,
+        "line-color": ACCENT,
+        "line-width": lineHalo.width,
+        "line-opacity": lineHalo.opacity,
+        "line-blur": lineHalo.blur,
       },
     },
     {
@@ -162,9 +150,10 @@ export const baseStyle = {
       filter: ["==", ["get", "selected"], 1],
       layout: { "line-cap": "round", "line-join": "round" },
       paint: {
-        "line-color": "#fff6e4",
-        "line-width": 3.4,
+        "line-color": ACCENT,
+        "line-width": 1.5,
         "line-opacity": 1,
+        "line-blur": 0,
       },
     },
     {
@@ -172,21 +161,19 @@ export const baseStyle = {
       type: "circle",
       source: "matches",
       paint: {
-        "circle-color": [
+        "circle-color": ACCENT,
+        "circle-radius": [
           "case",
-          ["==", ["get", "muted"], 1],
-          "#5e584e",
-          "#ffc56a",
+          ["any", ["==", ["get", "muted"], 1], ["==", ["get", "picked"], 1]],
+          0,
+          cityHalo.radius,
         ],
-        "circle-radius": ["case", ["==", ["get", "muted"], 1], 5, 14],
-        "circle-blur": 0.82,
+        "circle-blur": cityHalo.blur,
         "circle-opacity": [
           "case",
-          ["==", ["get", "picked"], 1],
+          ["any", ["==", ["get", "muted"], 1], ["==", ["get", "picked"], 1]],
           0,
-          ["==", ["get", "muted"], 1],
-          0.05,
-          0.46,
+          cityHalo.opacity,
         ],
       },
     },
@@ -195,26 +182,16 @@ export const baseStyle = {
       type: "circle",
       source: "matches",
       paint: {
-        "circle-color": [
-          "case",
-          ["==", ["get", "muted"], 1],
-          "#8a8174",
-          "#fff6e4",
-        ],
-        "circle-radius": ["case", ["==", ["get", "muted"], 1], 1.6, 3.6],
-        "circle-stroke-color": [
-          "case",
-          ["==", ["get", "muted"], 1],
-          "#4e483f",
-          "#ffb03a",
-        ],
-        "circle-stroke-width": ["case", ["==", ["get", "muted"], 1], 0.6, 1.2],
+        "circle-color": ["case", ["==", ["get", "muted"], 1], "#4A4E56", ACCENT],
+        "circle-radius": ["case", ["==", ["get", "muted"], 1], 1.5, 2.75],
+        "circle-stroke-width": 0,
+        "circle-blur": 0,
         "circle-opacity": [
           "case",
           ["==", ["get", "picked"], 1],
           0,
           ["==", ["get", "muted"], 1],
-          0.34,
+          0.4,
           1,
         ],
       },
@@ -247,10 +224,7 @@ function arrowImage(color: string): ImageData {
   context.lineTo(16, 21);
   context.lineTo(4, 27);
   context.closePath();
-  context.lineJoin = "round";
-  context.lineWidth = 3;
-  context.strokeStyle = "rgba(18, 10, 6, 0.9)";
-  context.stroke();
+  context.lineJoin = "miter";
   context.fillStyle = color;
   context.fill();
   return context.getImageData(0, 0, size, size);
@@ -258,10 +232,10 @@ function arrowImage(color: string): ImageData {
 
 export function decorateMap(map: MapLibreMap): void {
   if (!map.hasImage("arrow")) {
-    map.addImage("arrow", arrowImage("#f0c48a"), { pixelRatio: 2 });
+    map.addImage("arrow", arrowImage("#6A6E76"), { pixelRatio: 2 });
   }
   if (!map.hasImage("arrow-hot")) {
-    map.addImage("arrow-hot", arrowImage("#fff6e6"), { pixelRatio: 2 });
+    map.addImage("arrow-hot", arrowImage(ACCENT), { pixelRatio: 2 });
   }
   if (map.getLayer("arrows")) return;
   map.addLayer({
@@ -275,7 +249,7 @@ export function decorateMap(map: MapLibreMap): void {
         "arrow-hot",
         "arrow",
       ],
-      "icon-size": ["case", ["==", ["get", "selected"], 1], 1.15, 0.72],
+      "icon-size": ["case", ["==", ["get", "selected"], 1], 0.85, 0.55],
       "icon-rotate": ["get", "bearing"],
       "icon-rotation-alignment": "map",
       "icon-allow-overlap": true,

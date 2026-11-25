@@ -14,10 +14,10 @@ export function Slider({
       )}
       {...props}
     >
-      <SliderPrimitive.Track className="relative h-1 w-full grow overflow-hidden rounded-full bg-line">
-        <SliderPrimitive.Range className="absolute h-full bg-gold" />
+      <SliderPrimitive.Track className="relative h-px w-full grow bg-line">
+        <SliderPrimitive.Range className="absolute h-full bg-white" />
       </SliderPrimitive.Track>
-      <SliderPrimitive.Thumb className="block size-4 rounded-full border border-gold-2 bg-ink shadow-[0_0_0_4px_rgba(255,197,106,0.16)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold" />
+      <SliderPrimitive.Thumb className="block size-2.5 rounded-none border border-white bg-ink focus-visible:outline-none focus-visible:outline focus-visible:outline-1 focus-visible:outline-white" />
     </SliderPrimitive.Root>
   );
 }

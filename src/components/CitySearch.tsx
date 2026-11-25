@@ -104,7 +104,7 @@ export function CitySearch({
                   {city.capital ? <span className="suggest-cap">Capital</span> : null}
                 </span>
                 <span className="suggest-meta">
-                  {city.country} · {formatPopulation(city.population)}
+                  {city.country} · <span className="num">{formatPopulation(city.population)}</span>
                 </span>
               </button>
             </li>

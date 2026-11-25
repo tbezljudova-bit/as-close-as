@@ -9,19 +9,21 @@ type SentenceViewProps = {
 export function SentenceView({ sentence, selectedId, onSelect }: SentenceViewProps) {
   if (sentence.kind === "pair") {
     return (
-      <p className="sentence">
-        {sentence.originName} is as close to {sentence.targetName}{" "}
-        <span className="nowrap">({sentence.distanceLabel})</span> as it is to{" "}
+      <h1 className="sentence">
+        {sentence.originName} is as close to{" "}
+        <span className="sentence-destination">{sentence.targetName}</span>{" "}
+        <span className="num nowrap">({sentence.distanceLabel})</span> as it is to{" "}
         <NameList names={sentence.names} selectedId={selectedId} onSelect={onSelect} />.
-      </p>
+      </h1>
     );
   }
   if (sentence.kind === "radius") {
     return (
-      <p className="sentence">
-        {sentence.originName} is <span className="nowrap">{sentence.distanceLabel}</span>{" "}
-        from <NameList names={sentence.names} selectedId={selectedId} onSelect={onSelect} />.
-      </p>
+      <h1 className="sentence">
+        {sentence.originName} is{" "}
+        <span className="num nowrap">{sentence.distanceLabel}</span> from{" "}
+        <NameList names={sentence.names} selectedId={selectedId} onSelect={onSelect} />.
+      </h1>
     );
   }
   return <p className="sentence">{sentence.plain}</p>;

@@ -64,8 +64,7 @@ export function SidePanel({
   return (
     <aside className="panel">
       <div className="panel-top">
-        <p className="eyebrow">A circle of distance</p>
-        <h1>As Close As</h1>
+        <p className="product-name">As Close As</p>
         {invalidPair ? (
           <p className="sentence" role="alert">
             Choose a different city. The radius is the distance between two places.
@@ -142,6 +141,7 @@ export function SidePanel({
             </label>
             <Input
               id="distance-input"
+              className="num"
               type="number"
               inputMode="decimal"
               min={1}
@@ -155,7 +155,7 @@ export function SidePanel({
         <div>
           <div className="slider-label" id="tolerance-label">
             <span>Tolerance</span>
-            <span>{band}</span>
+            <span className="num">{band}</span>
           </div>
           <Slider
             aria-labelledby="tolerance-label"
@@ -193,10 +193,10 @@ export function SidePanel({
         </div>
         <div className="list-head">
           <span>
-            {matches.length.toLocaleString("en-US")}{" "}
+            <span className="num">{matches.length.toLocaleString("en-US")}</span>{" "}
             {matches.length === 1 ? "city" : "cities"}
           </span>
-          <span>Distance · delta</span>
+          <span>Distance</span>
         </div>
         {matches.length > LINE_CAP ? (
           <p className="cap-note">
@@ -224,15 +224,16 @@ export function SidePanel({
                     aria-pressed={selected}
                     onClick={() => onSelect(match.city.id)}
                   >
-                    <span>
+                    <span className="city-row-place">
                       <span className="city-row-name">{match.city.name}</span>
                       <span className="city-row-country">
                         {match.city.country}
-                        {match.city.capital ? " · Capital" : ""} ·{" "}
-                        {formatPopulation(match.city.population)}
+                        {match.city.capital ? " · Capital" : ""}
+                        {" · "}
+                        <span className="num">{formatPopulation(match.city.population)}</span>
                       </span>
                     </span>
-                    <span>
+                    <span className="city-row-figures">
                       <span className="city-row-distance">
                         {formatDistance(match.distanceKm, unit)}
                       </span>
@@ -250,7 +251,7 @@ export function SidePanel({
 
       <footer className="panel-foot">
         <p>
-          {cities.length.toLocaleString("en-US")} cities from{" "}
+          <span className="num">{cities.length.toLocaleString("en-US")}</span> cities from{" "}
           <a href="https://www.geonames.org/" target="_blank" rel="noreferrer">
             GeoNames
           </a>

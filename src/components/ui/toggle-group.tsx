@@ -9,7 +9,7 @@ export function ToggleGroup({
   return (
     <ToggleGroupPrimitive.Root
       className={cn(
-        "inline-flex rounded-full border border-line bg-field p-0.5",
+        "inline-flex border border-line bg-transparent",
         className,
       )}
       {...props}
@@ -24,7 +24,7 @@ export function ToggleGroupItem({
   return (
     <ToggleGroupPrimitive.Item
       className={cn(
-        "rounded-full px-3 py-1.5 text-sm text-muted transition-colors hover:text-paper focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold data-[state=on]:bg-paper data-[state=on]:text-ink",
+        "rounded-none border-r border-line px-3 py-1.5 text-[13px] text-muted transition-colors last:border-r-0 hover:text-paper focus-visible:outline-none focus-visible:outline focus-visible:outline-1 focus-visible:outline-gold data-[state=on]:bg-[#15171B] data-[state=on]:text-white",
         className,
       )}
       {...props}
