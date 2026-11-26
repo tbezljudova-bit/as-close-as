@@ -1,13 +1,16 @@
 import { describe, expect, it } from "vitest";
 import { destinationPoint } from "./geo";
+import { initialBearing } from "./geo";
 import {
+  LINE_CAP,
   SHORT_RING_KM,
   citiesForRadius,
   isWithinTolerance,
   matchCities,
+  matchesForLines,
   sortMatches,
 } from "./match";
-import type { City } from "./types";
+import type { City, Match } from "./types";
 
 const origin: City = {
   id: 1,
@@ -118,6 +121,48 @@ describe("sortMatches", () => {
       "Small",
       "Large",
     ]);
+  });
+});
+
+describe("matchesForLines", () => {
+  function ringMatch(id: number, bearing: number, population = 10_000): Match {
+    const city = cityAt(id, bearing, 1000, population, `City ${id}`);
+    return { city, distanceKm: 1000, deltaKm: 0, deltaRatio: id / 100_000 };
+  }
+
+  it("draws a line to every match when there are 80 or fewer", () => {
+    const matches = Array.from({ length: 10 }, (_, index) => ringMatch(index + 2, index * 36));
+    expect(matchesForLines(matches, origin, null)).toHaveLength(10);
+    expect(matchesForLines(matches, origin, null).map((match) => match.city.id)).toEqual(
+      matches.map((match) => match.city.id),
+    );
+  });
+
+  it("spreads 80 lines around the ring, including the far side", () => {
+    const crowded = Array.from({ length: 190 }, (_, index) =>
+      ringMatch(100 + index, (index / 190) * 40, 50_000 - index),
+    );
+    const far = [180, 200, 220, 250, 280, 310].map((bearing, index) =>
+      ringMatch(500 + index, bearing, 20_000),
+    );
+    const lined = matchesForLines([...crowded, ...far], origin, null);
+    expect(lined).toHaveLength(LINE_CAP);
+    expect(LINE_CAP).toBe(80);
+    for (const match of far) {
+      expect(lined.some((item) => item.city.id === match.city.id)).toBe(true);
+    }
+    const sectors = new Set(
+      lined.map((match) => Math.floor(initialBearing(origin, match.city) / (360 / LINE_CAP))),
+    );
+    expect(sectors.size).toBeGreaterThan(12);
+  });
+
+  it("keeps a line for the selected city without adding an eighty-first", () => {
+    const matches = Array.from({ length: 100 }, (_, index) => ringMatch(100 + index, index * 3.6));
+    const selected = matches[3];
+    const lined = matchesForLines(matches, origin, selected?.city.id ?? null);
+    expect(lined).toHaveLength(LINE_CAP);
+    expect(lined.some((match) => match.city.id === selected?.city.id)).toBe(true);
   });
 });
 

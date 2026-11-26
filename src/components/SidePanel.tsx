@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { formatBand, formatDelta, formatDistance, formatPopulation } from "../lib/format";
+import { LINE_CAP } from "../lib/match";
 import type { SentenceModel } from "../lib/sentence";
 import type { City, CompareMode, Match, SortKey, Unit } from "../lib/types";
 import { CitySearch } from "./CitySearch";
@@ -201,6 +202,13 @@ export function SidePanel({
           </span>
           <span>Distance</span>
         </div>
+        {matches.length > LINE_CAP ? (
+          <p className="cap-note">
+            Every match is listed below. To keep the map readable, when there are more than{" "}
+            {LINE_CAP} matches, lines are drawn to {LINE_CAP} of them, spread around the whole
+            ring.
+          </p>
+        ) : null}
         {matches.length === 0 ? (
           <p className="empty-list">
             {invalidPair
