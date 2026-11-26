@@ -13,7 +13,7 @@ import {
 } from "../lib/features";
 import { boundsForRing } from "../lib/geo";
 import type { City, LatLon, Match, ProjectionMode, Unit } from "../lib/types";
-import { MAP_GLOW, cityHalo } from "../map/glow";
+import { MAP_GLOW, cityHalo, flatMarkScale } from "../map/glow";
 import { baseStyle, decorateMap, setGeo } from "../map/style";
 import { RiseCard } from "./RiseCard";
 import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
@@ -213,9 +213,11 @@ export function MapView({
     if (!ready || !MAP_GLOW) return;
     const map = mapRef.current;
     if (!map) return;
+    const scale = projection === "flat" ? flatMarkScale(matches.length) : 1;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const paintGlow = (wave: number) => {
       if (!map.getLayer("match-glow")) return;
+      map.setPaintProperty("match-glow", "circle-blur", cityHalo.blur * (0.45 + scale * 0.55));
       map.setPaintProperty(
         "match-glow",
         "circle-opacity",
@@ -223,7 +225,7 @@ export function MapView({
           "case",
           ["any", ["==", ["get", "muted"], 1], ["==", ["get", "picked"], 1]],
           0,
-          cityHalo.opacity * (0.75 + wave * 0.25),
+          cityHalo.opacity * scale * (0.75 + wave * 0.25),
         ] as ExpressionSpecification,
       );
       map.setPaintProperty(
@@ -233,9 +235,25 @@ export function MapView({
           "case",
           ["any", ["==", ["get", "muted"], 1], ["==", ["get", "picked"], 1]],
           0,
-          cityHalo.radius + wave * 1.2,
+          cityHalo.radius * scale + wave * 1.2 * scale,
         ] as ExpressionSpecification,
       );
+      if (map.getLayer("match-core")) {
+        map.setPaintProperty("match-core", "circle-radius", [
+          "case",
+          ["==", ["get", "muted"], 1],
+          1.5 * (0.55 + scale * 0.45),
+          2.75 * (0.48 + scale * 0.52),
+        ] as ExpressionSpecification);
+      }
+      if (map.getLayer("arrows")) {
+        map.setLayoutProperty("arrows", "icon-size", [
+          "case",
+          ["==", ["get", "selected"], 1],
+          0.85,
+          0.34 + scale * 0.21,
+        ] as ExpressionSpecification);
+      }
     };
     if (reduce) {
       paintGlow(0.5);
@@ -248,7 +266,7 @@ export function MapView({
     };
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
-  }, [ready]);
+  }, [ready, projection, matches.length]);
 
   useEffect(() => {
     scaleRef.current?.setUnit(unit === "km" ? "metric" : "imperial");
@@ -335,11 +353,9 @@ export function MapView({
           <i className="swatch ring" /> Equal distance
         </span>
       </div>
-      <p className="map-caption">
-        {projection === "flat"
-          ? "Web Mercator stretches a true circle of distance."
-          : "On the globe, that ring is a circle."}
-      </p>
+      {projection === "flat" ? (
+        <p className="map-caption">Web Mercator stretches a true circle of distance.</p>
+      ) : null}
       <div className="view-toggle">
         <ToggleGroup
           type="single"

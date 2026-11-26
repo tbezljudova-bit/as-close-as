@@ -608,6 +608,7 @@ body {
 }
 
 .pin {
+  z-index: 5;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -616,10 +617,12 @@ body {
 }
 
 .pin-name {
-  padding: 0;
+  position: relative;
+  z-index: 1;
+  padding: 1px 5px;
   border: 0;
   border-radius: 0;
-  background: transparent;
+  background: rgba(11, 12, 14, 0.9);
   color: var(--color-paper);
   font-family: var(--font-sans);
   font-size: 11px;
@@ -642,7 +645,7 @@ body {
 }
 
 .pin-target .pin-name {
-  background: transparent;
+  background: rgba(11, 12, 14, 0.9);
 }
 
 html[data-glow="on"] .rise-orb {

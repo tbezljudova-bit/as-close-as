@@ -219,10 +219,10 @@ function arrowImage(color: string): ImageData {
   if (!context) throw new Error("Could not draw an arrow.");
   context.clearRect(0, 0, size, size);
   context.beginPath();
-  context.moveTo(16, 3);
-  context.lineTo(28, 27);
-  context.lineTo(16, 21);
-  context.lineTo(4, 27);
+  context.moveTo(16, 0);
+  context.lineTo(27, 26);
+  context.lineTo(16, 20);
+  context.lineTo(5, 26);
   context.closePath();
   context.lineJoin = "miter";
   context.fillStyle = color;
@@ -250,6 +250,7 @@ export function decorateMap(map: MapLibreMap): void {
         "arrow",
       ],
       "icon-size": ["case", ["==", ["get", "selected"], 1], 0.85, 0.55],
+      "icon-anchor": "top",
       "icon-rotate": ["get", "bearing"],
       "icon-rotation-alignment": "map",
       "icon-allow-overlap": true,

@@ -17,3 +17,14 @@ export const lineHalo = {
   width: MAP_GLOW ? 6 : 0,
   opacity: MAP_GLOW ? 0.38 : 0,
 };
+
+/**
+ * Flat view at a long radius packs matches into a few pixels.
+ * Ease the halo down as the list grows so those dots stay separate.
+ * The globe keeps the full halo.
+ */
+export function flatMarkScale(matchCount: number): number {
+  if (matchCount <= 40) return 1;
+  const t = Math.min(1, (matchCount - 40) / 240);
+  return 1 - t * 0.68;
+}

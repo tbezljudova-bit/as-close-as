@@ -199,21 +199,13 @@ export function arrowPlacement(
   a: LatLon,
   b: LatLon,
 ): { lon: number; lat: number; bearing: number } {
-  const steps = 48;
-  const coords = greatCircle(a, b, steps);
-  const index = Math.max(1, Math.round(steps * 0.86));
-  const previous = coords[index - 1] ?? coords[0];
-  const next = coords[index] ?? coords[coords.length - 1];
-  if (!previous || !next) {
-    return { lon: b.lon, lat: b.lat, bearing: initialBearing(a, b) };
-  }
+  const coords = greatCircle(a, b, 48);
+  const previous = coords[coords.length - 2] ?? coords[0];
+  if (!previous) return { lon: b.lon, lat: b.lat, bearing: initialBearing(a, b) };
   return {
-    lon: next[0],
-    lat: next[1],
-    bearing: initialBearing(
-      { lon: previous[0], lat: previous[1] },
-      { lon: next[0], lat: next[1] },
-    ),
+    lon: b.lon,
+    lat: b.lat,
+    bearing: initialBearing({ lon: previous[0], lat: previous[1] }, b),
   };
 }
 

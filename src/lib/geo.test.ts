@@ -137,16 +137,21 @@ describe("great circle arcs", () => {
     }
   });
 
-  it("places an arrow before the destination, pointing along the arc", () => {
+  it("places the arrow on the destination, pointing along the arrival", () => {
     const arrow = arrowPlacement(tallinn, yerevan);
-    const endBearing = initialBearing(
-      { lat: arrow.lat, lon: arrow.lon },
+    const line = greatCircle(tallinn, yerevan, 48);
+    const previous = line[line.length - 2];
+    expect(previous).toBeTruthy();
+    expect(arrow.lon).toBeCloseTo(yerevan.lon, 5);
+    expect(arrow.lat).toBeCloseTo(yerevan.lat, 5);
+    expect(haversineKm(arrow, yerevan)).toBeLessThan(0.01);
+    const arrival = initialBearing(
+      { lon: previous?.[0] ?? tallinn.lon, lat: previous?.[1] ?? tallinn.lat },
       yerevan,
     );
-    expect(haversineKm(tallinn, arrow)).toBeGreaterThan(500);
-    expect(haversineKm(arrow, yerevan)).toBeGreaterThan(50);
-    expect(Math.abs(arrow.bearing - endBearing)).toBeLessThan(25);
-    expect(arcLines(tallinn, yerevan).length).toBeGreaterThan(0);
+    const delta = Math.abs(arrow.bearing - arrival) % 360;
+    expect(Math.min(delta, 360 - delta)).toBeLessThan(1);
+    expect(arcLines(tallinn, yerevan).at(-1)?.at(-1)?.[0]).toBeCloseTo(yerevan.lon, 4);
   });
 });
 
