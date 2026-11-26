@@ -32,8 +32,8 @@ You need Node.js. No API key, and no server of your own. The city list and the c
 
 ```bash
 npm install
-npm test
 npm run dev
+npm test
 ```
 
 Open [http://localhost:43123](http://localhost:43123). The first view is Tallinn to Yerevan.
