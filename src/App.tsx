@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { MapView } from "./components/MapView";
 import { SidePanel } from "./components/SidePanel";
 import { cities, defaultOrigin, defaultTarget, findCityById } from "./lib/cities";
@@ -7,6 +7,12 @@ import { haversineKm } from "./lib/geo";
 import { citiesForRadius, matchCities, SHORT_RING_KM, sortMatches } from "./lib/match";
 import { loadTowns } from "./lib/towns";
 import { buildSentence } from "./lib/sentence";
+import {
+  STACKED_LAYOUT_QUERY,
+  selectionFollow,
+  selectionFramesCity,
+  type SelectSource,
+} from "./lib/select";
 import { projectionFromParam, projectionParam } from "./lib/view";
 import type {
   City,
@@ -89,6 +95,8 @@ export default function App() {
   const [projection, setProjection] = useState<ProjectionMode>(initial.projection);
   const [selectedId, setSelectedId] = useState<number | null>(initial.selectedId);
   const [riseNonce, setRiseNonce] = useState(0);
+  const [frame, setFrame] = useState<"center" | "settle">("settle");
+  const selectSource = useRef<SelectSource>("list");
   const [mapReady, setMapReady] = useState(false);
   const [towns, setTowns] = useState<City[]>([]);
 
@@ -154,9 +162,31 @@ export default function App() {
 
   useEffect(() => {
     if (selectedCityId == null) return;
-    document
-      .getElementById(`match-${selectedCityId}`)
-      ?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    const stacked = window.matchMedia(STACKED_LAYOUT_QUERY).matches;
+    const follow = selectionFollow(selectSource.current, stacked);
+    const behavior = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ? "auto"
+      : "smooth";
+    if (follow === "none") return;
+    if (follow === "map") {
+      const stage = document.querySelector(".stage");
+      const snap = () => {
+        stage?.scrollIntoView({ block: "start", inline: "nearest", behavior: "auto" });
+      };
+      snap();
+      // The row's highlight updates after this, and a phone will otherwise
+      // drag the page back down to keep that row on screen.
+      const frame = window.requestAnimationFrame(snap);
+      const later = window.setTimeout(snap, 80);
+      return () => {
+        window.cancelAnimationFrame(frame);
+        window.clearTimeout(later);
+      };
+    }
+    document.getElementById(`match-${selectedCityId}`)?.scrollIntoView({
+      block: "nearest",
+      behavior,
+    });
   }, [selectedCityId, riseNonce]);
 
   useEffect(() => {
@@ -201,9 +231,12 @@ export default function App() {
     selectedCityId,
   ]);
 
-  function selectCity(id: number | null) {
+  function selectCity(id: number | null, source: SelectSource = "list") {
+    selectSource.current = source;
     if (id != null && id === selectedId) setRiseNonce((value) => value + 1);
     setSelectedId(id);
+    const stacked = window.matchMedia(STACKED_LAYOUT_QUERY).matches;
+    setFrame(id != null && selectionFramesCity(source, stacked) ? "center" : "settle");
   }
 
   function changeMode(next: CompareMode) {
@@ -273,9 +306,10 @@ export default function App() {
         matches={matches}
         selected={selected}
         riseNonce={riseNonce}
+        frame={frame}
         projection={projection}
         unit={unit}
-        onSelect={selectCity}
+        onSelect={(id) => selectCity(id, "map")}
         onProjection={setProjection}
         onReady={() => setMapReady(true)}
       />

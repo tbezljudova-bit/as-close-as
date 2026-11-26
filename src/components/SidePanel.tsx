@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { formatBand, formatDelta, formatDistance, formatPopulation } from "../lib/format";
 import { LINE_CAP } from "../lib/match";
+import { releaseStackedFocus } from "../lib/select";
 import type { SentenceModel } from "../lib/sentence";
 import type { City, CompareMode, Match, SortKey, Unit } from "../lib/types";
 import { CitySearch } from "./CitySearch";
@@ -223,7 +224,10 @@ export function SidePanel({
                     id={`match-${match.city.id}`}
                     className={selected ? "city-row is-selected" : "city-row"}
                     aria-pressed={selected}
-                    onClick={() => onSelect(match.city.id)}
+                    onClick={(event) => {
+                      onSelect(match.city.id);
+                      releaseStackedFocus(event.currentTarget);
+                    }}
                   >
                     <span className="city-row-place">
                       <span className="city-row-name">{match.city.name}</span>

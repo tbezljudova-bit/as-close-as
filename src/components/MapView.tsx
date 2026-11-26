@@ -28,6 +28,7 @@ type MapViewProps = {
   matches: Match[];
   selected: Match | null;
   riseNonce: number;
+  frame: "center" | "settle";
   projection: ProjectionMode;
   unit: Unit;
   onSelect: (id: number | null) => void;
@@ -50,6 +51,7 @@ export function MapView({
   matches,
   selected,
   riseNonce,
+  frame,
   projection,
   unit,
   onSelect,
@@ -304,6 +306,10 @@ export function MapView({
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !ready || !selected) return;
+    if (frame === "center") {
+      frameOnCity(map, selected.city);
+      return;
+    }
     const point = map.project([selected.city.lon, selected.city.lat]);
     const width = map.getContainer().clientWidth;
     const height = map.getContainer().clientHeight;
@@ -316,7 +322,7 @@ export function MapView({
       center.y - (targetY - point.y),
     ]);
     map.easeTo({ center: next, duration: 480, bearing: 0, pitch: 0 });
-  }, [ready, selected]);
+  }, [ready, selected, frame, riseNonce]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -339,6 +345,10 @@ export function MapView({
       if (aboveOrigin && Math.abs(originPoint.x - projected.x) < 150 && Math.abs(shift) < 48) {
         shift = originPoint.x >= projected.x ? -160 : 160;
       }
+      const minX = cardHalf + 12;
+      const maxX = Math.max(minX, width - cardHalf - 12);
+      const cardX = Math.min(maxX, Math.max(minX, projected.x + shift));
+      shift = cardX - projected.x;
       setScreen({ x: projected.x, y: projected.y, shift });
     };
     update();
@@ -431,6 +441,16 @@ function holdSingleWorld(map: MapLibreMap, projection: ProjectionMode) {
   }
   map.setMinZoom(singleWorldMinZoom(map));
   map.setMaxBounds(WORLD_BOUNDS);
+}
+
+/** Rotate the globe, or pan the flat map, so the chosen city is in the centre. */
+function frameOnCity(map: MapLibreMap, city: LatLon) {
+  map.easeTo({
+    center: [city.lon, city.lat],
+    bearing: 0,
+    pitch: 0,
+    duration: 750,
+  });
 }
 
 function nearestMatchId(

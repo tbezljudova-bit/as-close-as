@@ -738,6 +738,7 @@ html[data-glow="on"] .swatch.ring {
 
   body {
     overflow: auto;
+    overflow-anchor: none;
   }
 
   .app {

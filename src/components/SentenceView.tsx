@@ -1,4 +1,5 @@
 import type { SentenceModel, SentenceName } from "../lib/sentence";
+import { releaseStackedFocus } from "../lib/select";
 
 type SentenceViewProps = {
   sentence: SentenceModel;
@@ -52,7 +53,10 @@ function NameList({
           type="button"
           className="sentence-name"
           aria-pressed={selectedId === name.id}
-          onClick={() => onSelect(name.id)}
+          onClick={(event) => {
+            onSelect(name.id);
+            releaseStackedFocus(event.currentTarget);
+          }}
         >
           {name.name}
         </button>
