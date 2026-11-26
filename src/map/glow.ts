@@ -4,7 +4,7 @@
  */
 export const MAP_GLOW = true;
 
-export const ACCENT = "#FFD60A";
+export const ACCENT = "#FFC56A";
 
 export const cityHalo = {
   blur: MAP_GLOW ? 0.7 : 0,

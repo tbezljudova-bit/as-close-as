@@ -11,10 +11,10 @@
   --color-line: #2a2d33;
   --color-field: #0b0c0e;
   --color-land: #15171b;
-  --color-gold: #ffd60a;
-  --color-gold-2: #ffd60a;
-  --color-ember: #ffd60a;
-  --color-accent: #ffd60a;
+  --color-gold: #ffc56a;
+  --color-gold-2: #ffe3b8;
+  --color-ember: #ffc56a;
+  --color-accent: #ffc56a;
 }
 
 html,
@@ -582,16 +582,16 @@ body {
 }
 
 html[data-glow="on"] .rise-orb {
-  box-shadow: 0 0 6px 1px rgba(255, 214, 10, 0.5);
+  box-shadow: 0 0 6px 1px rgba(255, 197, 106, 0.42);
 }
 
 html[data-glow="on"] .rise-stem {
-  box-shadow: 0 0 4px 0 rgba(255, 214, 10, 0.45);
+  box-shadow: 0 0 4px 0 rgba(255, 197, 106, 0.38);
 }
 
 html[data-glow="on"] .swatch.glow,
 html[data-glow="on"] .swatch.ring {
-  box-shadow: 0 0 5px 1px rgba(255, 214, 10, 0.45);
+  box-shadow: 0 0 5px 1px rgba(255, 197, 106, 0.4);
 }
 
 .maplibregl-ctrl-attrib {
