@@ -50,12 +50,6 @@ This map shows cities with 50,000+ people, plus every capital. For shorter trips
 
 Every match is listed below. To keep the map readable, when there are more than 80 matches, lines are drawn to 80 of them, spread around the whole ring.
 
-## Roadmap
-
-- A guessing game: how far is this city, really?
-- Rings measured in flight time, not only kilometres.
-- Personal places: home, a friend's city, a trip you are planning.
-
 ## License
 
 MIT. Copyright (c) 2026 Tamara Bezljudova. See [LICENSE](LICENSE).
