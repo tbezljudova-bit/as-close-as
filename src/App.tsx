@@ -4,7 +4,7 @@ import { SidePanel } from "./components/SidePanel";
 import { cities, defaultOrigin, defaultTarget, findCityById } from "./lib/cities";
 import { formatDistanceNumber, toKm } from "./lib/format";
 import { haversineKm } from "./lib/geo";
-import { citiesForRadius, matchCities, SHORT_RING_KM, sortMatches } from "./lib/match";
+import { citiesForRadius, matchCities, SHORT_RING_KM, sortMatches, resolveSelection, targetAsMatch } from "./lib/match";
 import { loadTowns } from "./lib/towns";
 import { buildSentence } from "./lib/sentence";
 import {
@@ -145,7 +145,15 @@ export default function App() {
     [rawMatches, sortKey],
   );
 
-  const selected = matches.find((match) => match.city.id === selectedId) ?? null;
+  const targetMatch = useMemo(
+    () => (mode === "city" && !invalidPair ? targetAsMatch(origin, target, radiusKm) : null),
+    [mode, invalidPair, origin, target, radiusKm],
+  );
+
+  const selected = useMemo(
+    () => resolveSelection(matches, targetMatch, selectedId),
+    [matches, targetMatch, selectedId],
+  );
 
   const sentence = invalidPair
     ? null

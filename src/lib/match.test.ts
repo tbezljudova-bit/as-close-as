@@ -9,6 +9,8 @@ import {
   matchCities,
   matchesForLines,
   sortMatches,
+  targetAsMatch,
+  resolveSelection,
 } from "./match";
 import type { City, Match } from "./types";
 
@@ -94,6 +96,45 @@ describe("matchCities", () => {
         tolerance: 0.03,
       }),
     ).toEqual([]);
+  });
+});
+
+describe("targetAsMatch", () => {
+  it("measures the destination exactly and marks it as the target", () => {
+    const destination = cityAt(5, 90, 2547, 1_000_000, "Yerevan");
+    const match = targetAsMatch(origin, destination, 2547);
+    expect(match.target).toBe(true);
+    expect(match.city.id).toBe(destination.id);
+    expect(match.distanceKm).toBeCloseTo(2547, 0);
+    expect(match.deltaKm).toBeCloseTo(0, 3);
+  });
+});
+
+describe("resolveSelection", () => {
+  const listed = cityAt(2, 0, 1000, 100_000, "Listed");
+  const destination = cityAt(3, 90, 1000, 200_000, "Destination");
+  const listedMatch: Match = {
+    city: listed,
+    distanceKm: 1000,
+    deltaKm: 0,
+    deltaRatio: 0,
+  };
+  const destinationMatch = targetAsMatch(origin, destination, 1000);
+
+  it("uses the list row, the destination pin, or neither", () => {
+    expect(resolveSelection([listedMatch], destinationMatch, listed.id)?.city.name).toBe("Listed");
+    expect(resolveSelection([listedMatch], destinationMatch, listed.id)?.target).toBeUndefined();
+    expect(resolveSelection([listedMatch], destinationMatch, destination.id)?.target).toBe(true);
+    expect(resolveSelection([listedMatch], null, 99)).toBeNull();
+    expect(resolveSelection([listedMatch], destinationMatch, null)).toBeNull();
+  });
+
+  it("keeps a destination that is also listed in sync and marked as the target", () => {
+    const both = targetAsMatch(origin, listed, 1000);
+    const selected = resolveSelection([listedMatch], both, listed.id);
+    expect(selected?.city.id).toBe(listed.id);
+    expect(selected?.target).toBe(true);
+    expect(selected?.distanceKm).toBe(listedMatch.distanceKm);
   });
 });
 

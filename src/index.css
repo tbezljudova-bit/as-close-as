@@ -629,6 +629,30 @@ body {
   pointer-events: none;
 }
 
+.pin-target {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.pin-target:focus-visible {
+  outline: 1px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+.pin-target.is-selected .pin-name {
+  display: none;
+}
+
+.pin-target .pin-dot {
+  position: relative;
+}
+
+.pin-target .pin-dot::after {
+  content: "";
+  position: absolute;
+  inset: -12px;
+}
+
 .pin-name {
   position: relative;
   z-index: 1;

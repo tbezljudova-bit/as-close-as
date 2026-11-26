@@ -44,6 +44,37 @@ export function matchCities(args: {
   return matches;
 }
 
+/** The destination, measured like a match so it can be selected from its pin. */
+export function targetAsMatch(origin: LatLon, target: City, radiusKm: number): Match {
+  const distanceKm = haversineKm(origin, target);
+  const deltaKm = distanceKm - radiusKm;
+  return {
+    city: target,
+    distanceKm,
+    deltaKm,
+    deltaRatio: radiusKm > 0 ? deltaKm / radiusKm : 0,
+    target: true,
+  };
+}
+
+/**
+ * The selected city is a list row when it is one, and the destination pin
+ * when that city was chosen instead. A destination that is also listed
+ * stays the same city, marked as the target.
+ */
+export function resolveSelection(
+  matches: Match[],
+  target: Match | null,
+  selectedId: number | null,
+): Match | null {
+  if (selectedId == null) return null;
+  const fromList = matches.find((match) => match.city.id === selectedId);
+  if (fromList) {
+    return fromList.city.id === target?.city.id ? { ...fromList, target: true } : fromList;
+  }
+  return target?.city.id === selectedId ? target : null;
+}
+
 export function sortMatches(matches: Match[], sortKey: SortKey): Match[] {
   const sorted = matches.slice();
   if (sortKey === "population") {

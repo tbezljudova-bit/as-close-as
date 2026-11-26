@@ -26,4 +26,6 @@ export type Match = {
   distanceKm: number;
   deltaKm: number;
   deltaRatio: number;
+  /** The destination the ring was drawn to, when that city is the one selected. */
+  target?: boolean;
 };

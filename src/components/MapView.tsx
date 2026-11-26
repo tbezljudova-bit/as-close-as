@@ -187,7 +187,11 @@ export function MapView({
       radiusKm > 1 ? buildRingFeatures(origin, radiusKm, tolerance) : { type: "FeatureCollection", features: [] },
     );
     const lined = matchesForLines(matches, origin, selected?.city.id ?? null);
-    const arcs = buildArcFeatures(origin, lined, selected?.city.id ?? null);
+    const route =
+      selected?.target && !lined.some((match) => match.city.id === selected.city.id)
+        ? [...lined, selected]
+        : lined;
+    const arcs = buildArcFeatures(origin, route, selected?.city.id ?? null);
     setGeo(map, "arcs", arcs.lines);
     setGeo(map, "arrows", arcs.arrows);
     setGeo(map, "matches", buildMatchPoints(matches, selected?.city.id ?? null));
@@ -297,11 +301,14 @@ export function MapView({
     originMarker.current = upsertPin(map, originMarker.current, origin, "origin");
     if (showTarget && target) {
       targetMarker.current = upsertPin(map, targetMarker.current, target, "target");
+      bindTargetPin(targetMarker.current, target, selected?.city.id === target.id, (id) =>
+        onSelectRef.current(id),
+      );
     } else if (targetMarker.current) {
       targetMarker.current.remove();
       targetMarker.current = null;
     }
-  }, [ready, origin, target, showTarget]);
+  }, [ready, origin, target, showTarget, selected]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -540,4 +547,28 @@ function upsertPin(
   if (name) name.textContent = city.name;
   marker.setLngLat([city.lon, city.lat]);
   return marker;
+}
+
+function bindTargetPin(
+  marker: Marker,
+  city: City,
+  selected: boolean,
+  onSelect: (id: number) => void,
+) {
+  const element = marker.getElement();
+  element.classList.toggle("is-selected", selected);
+  element.role = "button";
+  element.tabIndex = 0;
+  element.setAttribute("aria-pressed", selected ? "true" : "false");
+  element.setAttribute("aria-label", `${city.name}, your target`);
+  element.onclick = (event) => {
+    event.stopPropagation();
+    onSelect(city.id);
+  };
+  element.onkeydown = (event) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    event.preventDefault();
+    event.stopPropagation();
+    onSelect(city.id);
+  };
 }
