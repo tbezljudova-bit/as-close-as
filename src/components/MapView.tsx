@@ -190,7 +190,7 @@ export function MapView({
     setGeo(map, "arrows", arcs.arrows);
     setGeo(map, "matches", buildMatchPoints(matches, selected?.city.id ?? null));
     if (map.getLayer("arcs")) {
-      map.setPaintProperty("arcs", "line-opacity", selected ? 0.16 : 0.55);
+      map.setPaintProperty("arcs", "line-opacity", selected ? 0.42 : 0.55);
     }
     if (map.getLayer("cities-dim")) {
       map.setPaintProperty("cities-dim", "circle-opacity", selected ? 0.18 : 0.55);
@@ -226,14 +226,18 @@ export function MapView({
     const paintGlow = (wave: number) => {
       if (!map.getLayer("match-glow")) return;
       map.setPaintProperty("match-glow", "circle-blur", cityHalo.blur * (0.45 + scale * 0.55));
+      const glowRadius = cityHalo.radius * scale + wave * 1.2 * scale;
+      const glowOpacity = cityHalo.opacity * scale * (0.75 + wave * 0.25);
       map.setPaintProperty(
         "match-glow",
         "circle-opacity",
         [
           "case",
-          ["any", ["==", ["get", "muted"], 1], ["==", ["get", "picked"], 1]],
-          0,
-          cityHalo.opacity * scale * (0.75 + wave * 0.25),
+          ["==", ["get", "picked"], 1],
+          Math.min(0.78, glowOpacity * 1.35),
+          ["==", ["get", "muted"], 1],
+          glowOpacity * 0.62,
+          glowOpacity,
         ] as ExpressionSpecification,
       );
       map.setPaintProperty(
@@ -241,17 +245,22 @@ export function MapView({
         "circle-radius",
         [
           "case",
-          ["any", ["==", ["get", "muted"], 1], ["==", ["get", "picked"], 1]],
-          0,
-          cityHalo.radius * scale + wave * 1.2 * scale,
+          ["==", ["get", "picked"], 1],
+          glowRadius * 1.45,
+          ["==", ["get", "muted"], 1],
+          glowRadius * 0.85,
+          glowRadius,
         ] as ExpressionSpecification,
       );
       if (map.getLayer("match-core")) {
+        const core = 2.75 * (0.48 + scale * 0.52);
         map.setPaintProperty("match-core", "circle-radius", [
           "case",
+          ["==", ["get", "picked"], 1],
+          core * 1.55,
           ["==", ["get", "muted"], 1],
-          1.5 * (0.55 + scale * 0.45),
-          2.75 * (0.48 + scale * 0.52),
+          core * 0.9,
+          core,
         ] as ExpressionSpecification);
       }
       if (map.getLayer("arrows")) {
