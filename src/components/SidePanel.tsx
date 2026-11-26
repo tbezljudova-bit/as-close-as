@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { LINE_CAP } from "../lib/match";
 import { formatBand, formatDelta, formatDistance, formatPopulation } from "../lib/format";
 import type { SentenceModel } from "../lib/sentence";
@@ -192,20 +193,15 @@ export function SidePanel({
           ) : null}
         </div>
         <div className="list-head">
-          <span>
-            <span className="num">{matches.length.toLocaleString("en-US")}</span>{" "}
-            {matches.length === 1 ? "city" : "cities"}
+          <span className="list-head-label">
+            <span>
+              <span className="num">{matches.length.toLocaleString("en-US")}</span>{" "}
+              {matches.length === 1 ? "city" : "cities"}
+            </span>
+            <DataNote />
           </span>
           <span>Distance</span>
         </div>
-        <p className="data-note">
-          Cities with 50,000+ people and capitals. For distances under 500 km, towns with
-          5,000+ people are included too. Distances are straight-line (great-circle). Data:{" "}
-          <a href="https://www.geonames.org/" target="_blank" rel="noreferrer">
-            GeoNames
-          </a>{" "}
-          (CC BY 4.0).
-        </p>
         {matches.length > LINE_CAP ? (
           <p className="cap-note">
             Every match is listed. Lines on the map show the {LINE_CAP} cities closest
@@ -268,5 +264,73 @@ export function SidePanel({
         <p>A project by Tamara Bezljudova.</p>
       </footer>
     </aside>
+  );
+}
+
+type NoteMode = "closed" | "transient" | "pinned";
+
+function DataNote() {
+  const [mode, setMode] = useState<NoteMode>("closed");
+  const rootRef = useRef<HTMLSpanElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const open = mode !== "closed";
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      event.stopPropagation();
+      setMode("closed");
+      buttonRef.current?.focus();
+    };
+    const onPointer = (event: PointerEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) setMode("closed");
+    };
+    document.addEventListener("keydown", onKey);
+    document.addEventListener("pointerdown", onPointer);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("pointerdown", onPointer);
+    };
+  }, [open]);
+
+  return (
+    <span
+      className="data-note"
+      ref={rootRef}
+      onMouseEnter={() => setMode((current) => (current === "pinned" ? current : "transient"))}
+      onMouseLeave={() => setMode((current) => (current === "pinned" ? current : "closed"))}
+      onFocus={() => setMode((current) => (current === "pinned" ? current : "transient"))}
+      onBlur={(event) => {
+        const next = event.relatedTarget;
+        if (next instanceof Node && rootRef.current?.contains(next)) return;
+        setMode((current) => (current === "pinned" ? current : "closed"));
+      }}
+    >
+      <button
+        ref={buttonRef}
+        type="button"
+        className="data-note-button"
+        aria-expanded={open}
+        aria-controls="city-data-note"
+        aria-haspopup="dialog"
+        aria-label="About this list"
+        onClick={() => setMode((current) => (current === "pinned" ? "closed" : "pinned"))}
+      >
+        i
+      </button>
+      {open ? (
+        <span id="city-data-note" role="dialog" aria-label="About this list" className="data-note-popover">
+          <p className="data-note-card">
+            Cities with 50,000+ people and capitals. For distances under 500 km, towns with
+            5,000+ people are included too. Distances are straight-line (great-circle). Data:{" "}
+            <a href="https://www.geonames.org/" target="_blank" rel="noreferrer">
+              GeoNames
+            </a>{" "}
+            (CC BY 4.0).
+          </p>
+        </span>
+      ) : null}
+    </span>
   );
 }
