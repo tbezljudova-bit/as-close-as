@@ -502,7 +502,8 @@ body {
   width: 16px;
   height: 1px;
   border-radius: 0;
-  background: var(--color-accent);
+  background: #ffdca6;
+  opacity: 0.62;
 }
 
 .map-caption {
@@ -668,9 +669,12 @@ html[data-glow="on"] .rise-stem {
   box-shadow: 0 0 4px 0 rgba(255, 197, 106, 0.38);
 }
 
-html[data-glow="on"] .swatch.glow,
-html[data-glow="on"] .swatch.ring {
+html[data-glow="on"] .swatch.glow {
   box-shadow: 0 0 5px 1px rgba(255, 197, 106, 0.4);
+}
+
+html[data-glow="on"] .swatch.ring {
+  box-shadow: 0 0 8px 2px rgba(255, 220, 166, 0.2);
 }
 
 .maplibregl-ctrl-attrib {

@@ -6,6 +6,19 @@ export const MAP_GLOW = true;
 
 export const ACCENT = "#FFC56A";
 
+/** 40% of the way from #FFC56A toward white. The ring only. */
+export const RING = "#FFDCA6";
+
+export const ringStroke = {
+  opacity: 0.62,
+};
+
+export const ringHalo = {
+  blur: MAP_GLOW ? 2.2 : 0,
+  width: MAP_GLOW ? 6 : 0,
+  opacity: MAP_GLOW ? 0.2 : 0,
+};
+
 export const cityHalo = {
   blur: MAP_GLOW ? 0.7 : 0,
   radius: MAP_GLOW ? 8 : 0,

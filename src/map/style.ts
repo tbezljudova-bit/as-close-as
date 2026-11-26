@@ -10,7 +10,7 @@ import {
   buildGraticule,
 } from "../lib/features";
 import { countryFeatures } from "../lib/world";
-import { ACCENT, cityHalo, lineHalo } from "./glow";
+import { ACCENT, RING, cityHalo, lineHalo, ringHalo, ringStroke } from "./glow";
 
 export const baseStyle = {
   version: 8,
@@ -98,10 +98,10 @@ export const baseStyle = {
       filter: ["==", ["get", "kind"], "main"],
       layout: { "line-cap": "round", "line-join": "round" },
       paint: {
-        "line-color": ACCENT,
-        "line-width": lineHalo.width,
-        "line-opacity": lineHalo.opacity,
-        "line-blur": lineHalo.blur,
+        "line-color": RING,
+        "line-width": ringHalo.width,
+        "line-opacity": ringHalo.opacity,
+        "line-blur": ringHalo.blur,
       },
     },
     {
@@ -111,10 +111,10 @@ export const baseStyle = {
       filter: ["==", ["get", "kind"], "main"],
       layout: { "line-cap": "round", "line-join": "round" },
       paint: {
-        "line-color": ACCENT,
+        "line-color": RING,
         "line-width": 1.25,
-        "line-opacity": 1,
-        "line-blur": 0,
+        "line-opacity": ringStroke.opacity,
+        "line-blur": 0.35,
       },
     },
     {
