@@ -118,6 +118,7 @@ export function buildArcFeatures(
     if (parts.length > 0) {
       lines.push({
         type: "Feature",
+        id: match.city.id,
         properties: { id: match.city.id, selected, muted },
         geometry: { type: "MultiLineString", coordinates: parts },
       });

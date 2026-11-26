@@ -123,16 +123,33 @@ export function MapView({
     map.keyboard.disableRotation();
 
     let cancelled = false;
+    let hoveredArc: number | null = null;
+    const paintHover = (id: number | null) => {
+      if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) id = null;
+      if (hoveredArc != null && hoveredArc !== id) {
+        map.setFeatureState({ source: "arcs", id: hoveredArc }, { hover: false });
+      }
+      if (id != null && id !== hoveredArc) {
+        map.setFeatureState({ source: "arcs", id }, { hover: true });
+      }
+      hoveredArc = id;
+    };
     const onClick = (event: { point: { x: number; y: number } }) => {
-      const id = nearestMatchId(map, event.point, matchesRef.current);
-      onSelectRef.current(id);
+      const dot = nearestMatchId(map, event.point, matchesRef.current);
+      onSelectRef.current(dot ?? nearestArcId(map, event.point));
     };
     const onMove = (event: { point: { x: number; y: number } }) => {
-      const id = nearestMatchId(map, event.point, matchesRef.current);
-      map.getCanvas().style.cursor = id == null ? "" : "pointer";
+      const dot = nearestMatchId(map, event.point, matchesRef.current);
+      const arc = nearestArcId(map, event.point);
+      map.getCanvas().style.cursor = dot == null && arc == null ? "" : "pointer";
+      paintHover(arc);
     };
     map.on("click", onClick);
     map.on("mousemove", onMove);
+    map.on("mouseout", () => {
+      map.getCanvas().style.cursor = "";
+      paintHover(null);
+    });
     map.on("resize", () => {
       if (projectionRef.current === "flat") map.setMinZoom(singleWorldMinZoom(map));
     });
@@ -484,6 +501,74 @@ function nearestMatchId(
     if (!best || distance < best.distance) best = { id, distance };
   }
   return best?.id ?? null;
+}
+
+/** A tap within this many pixels of a line counts, so the hairline is easy to hit. */
+const ARC_HIT_PX = 12;
+
+function nearestArcId(
+  map: MapLibreMap,
+  point: { x: number; y: number },
+): number | null {
+  const layers = ["arcs", "arcs-selected", "arcs-glow"].filter((id) => map.getLayer(id));
+  if (layers.length === 0) return null;
+  const pad = ARC_HIT_PX / 2;
+  const features = map.queryRenderedFeatures(
+    [
+      [point.x - pad, point.y - pad],
+      [point.x + pad, point.y + pad],
+    ],
+    { layers },
+  );
+  let best: { id: number; distance: number } | null = null;
+  const seen = new Set<number>();
+  for (const feature of features) {
+    const id = Number(feature.id ?? feature.properties?.id);
+    if (!Number.isFinite(id) || seen.has(id)) continue;
+    seen.add(id);
+    const distance = featureScreenDistance(map, feature.geometry, point);
+    if (distance > pad) continue;
+    if (!best || distance < best.distance) best = { id, distance };
+  }
+  return best?.id ?? null;
+}
+
+function featureScreenDistance(
+  map: MapLibreMap,
+  geometry: { type: string; coordinates?: unknown },
+  point: { x: number; y: number },
+): number {
+  const lines =
+    geometry.type === "LineString"
+      ? [geometry.coordinates as [number, number][]]
+      : geometry.type === "MultiLineString"
+        ? (geometry.coordinates as [number, number][][])
+        : [];
+  let best = Infinity;
+  for (const line of lines) {
+    for (let index = 1; index < line.length; index += 1) {
+      const start = line[index - 1];
+      const end = line[index];
+      if (!start || !end) continue;
+      const a = map.project(start);
+      const b = map.project(end);
+      best = Math.min(best, distanceToSegment(point, a, b));
+    }
+  }
+  return best;
+}
+
+function distanceToSegment(
+  point: { x: number; y: number },
+  a: { x: number; y: number },
+  b: { x: number; y: number },
+): number {
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const length = dx * dx + dy * dy;
+  if (length === 0) return Math.hypot(point.x - a.x, point.y - a.y);
+  const t = Math.max(0, Math.min(1, ((point.x - a.x) * dx + (point.y - a.y) * dy) / length));
+  return Math.hypot(point.x - (a.x + t * dx), point.y - (a.y + t * dy));
 }
 
 function fitRing(

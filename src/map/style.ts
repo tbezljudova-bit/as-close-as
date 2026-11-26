@@ -131,6 +131,18 @@ export const baseStyle = {
       },
     },
     {
+      id: "arcs-hover",
+      type: "line",
+      source: "arcs",
+      layout: { "line-cap": "round", "line-join": "round" },
+      paint: {
+        "line-color": ["case", ["==", ["get", "selected"], 1], ACCENT, "#8A8F98"],
+        "line-width": ["case", ["==", ["get", "selected"], 1], 2.25, 1.75],
+        "line-opacity": ["case", ["boolean", ["feature-state", "hover"], false], 0.9, 0],
+        "line-blur": 0.2,
+      },
+    },
+    {
       id: "arcs-glow",
       type: "line",
       source: "arcs",
