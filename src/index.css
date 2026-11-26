@@ -261,30 +261,30 @@ body {
 }
 
 .data-note-button {
+  display: inline-flex;
   width: 16px;
   height: 16px;
   padding: 0;
-  border: 1px solid var(--color-line);
-  border-radius: 50%;
+  border: 0;
   background: transparent;
   color: var(--color-muted);
-  font-family: var(--font-sans);
-  font-size: 11px;
-  font-style: italic;
-  font-weight: 560;
-  line-height: 14px;
   cursor: pointer;
+}
+
+.data-note-icon {
+  display: block;
+  width: 16px;
+  height: 16px;
+  overflow: visible;
 }
 
 .data-note-button:hover,
 .data-note-button[aria-expanded="true"] {
   color: var(--color-paper);
-  border-color: var(--color-paper);
 }
 
 .data-note-button:focus-visible {
   color: var(--color-paper);
-  border-color: var(--color-paper);
   outline: 1px solid var(--color-accent);
   outline-offset: 2px;
 }

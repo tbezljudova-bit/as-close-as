@@ -317,7 +317,13 @@ function DataNote() {
         aria-label="About this list"
         onClick={() => setMode((current) => (current === "pinned" ? "closed" : "pinned"))}
       >
-        i
+        <svg className="data-note-icon" viewBox="0 0 16 16" aria-hidden="true">
+          <circle cx="8" cy="8" r="7.5" fill="none" stroke="currentColor" strokeWidth="1" />
+          <path
+            fill="currentColor"
+            d="M8 4.55a.9.9 0 1 0 0 1.8.9.9 0 0 0 0-1.8zM7.35 7.3h1.3v4.15h-1.3z"
+          />
+        </svg>
       </button>
       {open ? (
         <span id="city-data-note" role="dialog" aria-label="About this list" className="data-note-popover">
