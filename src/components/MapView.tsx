@@ -130,6 +130,8 @@ export function MapView({
     map.on("mousemove", onMove);
     map.on("load", () => {
       if (cancelled) return;
+      map.setProjection({ type: projection === "globe" ? "globe" : "mercator" });
+      map.setRenderWorldCopies(projection === "flat");
       map.resize();
       decorateMap(map);
       setReady(true);
@@ -349,8 +351,8 @@ export function MapView({
             if (value === "flat" || value === "globe") onProjection(value);
           }}
         >
-          <ToggleGroupItem value="flat">Map</ToggleGroupItem>
           <ToggleGroupItem value="globe">Globe</ToggleGroupItem>
+          <ToggleGroupItem value="flat">Map</ToggleGroupItem>
         </ToggleGroup>
       </div>
       <div className="rise-layer">

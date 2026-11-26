@@ -4,21 +4,21 @@ Tallinn is as close to Yerevan (≈ 2,547 km) as it is to Adana, Barcelona, Anta
 
 As Close As is a small map for that kind of question. Pick a city, set a distance (or a second city), and it draws the true circle of places that far away. Cities on the ring light up. The rest stay dim. Choose one and it rises off the map, with the route from the origin drawn brighter than the others.
 
-The flat map is the main view. A globe sits beside it, for when you want the same ring to look like a circle.
+The app opens on a globe. The flat Mercator map is the other toggle, for when you want to see that same ring stretched.
 
 The live map is at [https://tbezljudova-bit.github.io/as-close-as/](https://tbezljudova-bit.github.io/as-close-as/).
 
-![Dark map of the Tallinn to Yerevan ring](docs/screenshots/dark-map.png)
+![The Tallinn to Yerevan ring on the globe](docs/screenshots/globe.png)
+
+![The same ring stretched on the flat map](docs/screenshots/dark-map.png)
 
 ![Barcelona rises off the ring](docs/screenshots/city-rise.png)
-
-![The same ring on the globe](docs/screenshots/globe.png)
 
 ## Why a flat map fools you
 
 Web Mercator is the usual web map. It keeps north up and angles locally true, and it stretches distances as you leave the equator. A real circle of equal distance, drawn on that map, becomes a tall oval. Greenland looks huge. A flight that feels "across Europe" on the screen may be the same length as one that looks much longer.
 
-The ring in this app is not an oval drawn on the map. It is a set of points that are each the same great-circle distance from the origin. Mercator then stretches that ring. Switch to the globe and the same points sit on a circle.
+The ring in this app is not an oval drawn on the map. It is a set of points that are each the same great-circle distance from the origin. On the globe those points sit on a circle. Switch to the flat map and Mercator stretches that ring.
 
 ## How the distance is worked out
 

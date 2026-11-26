@@ -6,6 +6,7 @@ import { formatDistanceNumber, toKm } from "./lib/format";
 import { haversineKm } from "./lib/geo";
 import { matchCities, sortMatches } from "./lib/match";
 import { buildSentence } from "./lib/sentence";
+import { projectionFromParam, projectionParam } from "./lib/view";
 import type {
   City,
   CompareMode,
@@ -39,7 +40,7 @@ function readInitial(): InitialState {
   const unit: Unit = params.get("unit") === "mi" ? "mi" : "km";
   const tolerancePct = clamp(Number(params.get("tol") ?? 3), 0.5, 12);
   const sortKey: SortKey = params.get("sort") === "fit" ? "closeness" : "population";
-  const projection: ProjectionMode = params.get("view") === "globe" ? "globe" : "flat";
+  const projection = projectionFromParam(params.get("view"));
   const pick = Number(params.get("pick"));
   const selectedId = Number.isFinite(pick) ? pick : null;
   if (params.has("km")) {
@@ -159,7 +160,8 @@ export default function App() {
     if (unit !== "km") params.set("unit", unit);
     if (tolerancePct !== 3) params.set("tol", String(tolerancePct));
     if (sortKey !== "population") params.set("sort", "fit");
-    if (projection !== "flat") params.set("view", "globe");
+    const view = projectionParam(projection);
+    if (view) params.set("view", view);
     if (selectedCityId != null) params.set("pick", String(selectedCityId));
     const query = params.toString();
     const next = query ? `${window.location.pathname}?${query}` : window.location.pathname;
