@@ -1,4 +1,4 @@
-import { formatDelta, formatDistance } from "../lib/format";
+import { formatDelta, formatDistance, formatPopulation } from "../lib/format";
 import type { Match, Unit } from "../lib/types";
 
 type RiseCardProps = {
@@ -8,12 +8,17 @@ type RiseCardProps = {
 };
 
 export function RiseCard({ match, unit, shift }: RiseCardProps) {
+  const population = formatPopulation(match.city.population);
   return (
     <div className="rise-stack" style={{ transform: "translateX(-50%)" }}>
       <div className="rise-card-shift" style={{ transform: `translateX(${shift}px)` }}>
         <article className="rise-card">
           <p className="rise-kicker">{match.city.country}</p>
           <h2 className="rise-name">{match.city.name}</h2>
+          <p className="rise-pop">
+            {match.city.capital ? "Capital · " : null}
+            <span className="num">{population}</span>
+          </p>
           <p className="rise-meta">
             {match.target
               ? formatDistance(match.distanceKm, unit)

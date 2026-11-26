@@ -589,6 +589,12 @@ body {
   letter-spacing: -0.035em;
 }
 
+.rise-pop {
+  margin: 4px 0 0;
+  color: var(--color-muted);
+  font-size: 12px;
+}
+
 .rise-meta,
 .rise-delta {
   margin: 8px 0 0;
