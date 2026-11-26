@@ -15,9 +15,10 @@ function maplibreWorker(): Plugin {
   return {
     name: "maplibre-worker",
     configureServer(server) {
+      const workerUrl = `${server.config.base}maplibre-gl-worker.mjs`;
       server.middlewares.use((req, res, next) => {
         const url = req.url?.split("?")[0];
-        if (url !== "/maplibre-gl-worker.mjs") return next();
+        if (url !== workerUrl) return next();
         res.setHeader("Content-Type", "text/javascript");
         res.setHeader("Cache-Control", "no-cache");
         fs.createReadStream(workerFile).pipe(res);
@@ -34,6 +35,7 @@ function maplibreWorker(): Plugin {
 }
 
 export default defineConfig({
+  base: "/as-close-as/",
   plugins: [maplibreWorker(), react(), tailwindcss()],
   server: {
     host: "0.0.0.0",

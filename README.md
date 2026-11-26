@@ -6,6 +6,8 @@ As Close As is a small map for that kind of question. Pick a city, set a distanc
 
 The flat map is the main view. A globe sits beside it, for when you want the same ring to look like a circle.
 
+The live map is at [https://tbezljudova-bit.github.io/as-close-as/](https://tbezljudova-bit.github.io/as-close-as/).
+
 ![Dark map of the Tallinn to Yerevan ring](docs/screenshots/dark-map.png)
 
 ![Barcelona rises off the ring](docs/screenshots/city-rise.png)
@@ -36,9 +38,9 @@ npm run dev
 npm test
 ```
 
-Open [http://localhost:43123](http://localhost:43123). The first view is Tallinn to Yerevan.
+Open [http://localhost:43123/as-close-as/](http://localhost:43123/as-close-as/). The first view is Tallinn to Yerevan.
 
-`npm run build` writes a static site to `dist/`. You can host those files anywhere that serves a folder.
+`npm run build` writes a static site to `dist/`, with asset URLs under `/as-close-as/`. Pushes to `main` publish that folder to GitHub Pages.
 
 `npm run prepare-data` rebuilds the city file from a GeoNames dump, if you want a different cutoff. The script expects `cities15000.txt` and `countryInfo.txt` from [GeoNames](https://www.geonames.org/).
 
