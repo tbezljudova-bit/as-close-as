@@ -66,6 +66,8 @@ export function MapView({
   const onReadyRef = useRef(onReady);
   const fitted = useRef(false);
   const notified = useRef(false);
+  const projectionRef = useRef(projection);
+  projectionRef.current = projection;
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
   const [screen, setScreen] = useState<ScreenPoint | null>(null);
@@ -92,6 +94,7 @@ export function MapView({
         maxPitch: 0,
         pitch: 0,
         dragRotate: false,
+        renderWorldCopies: false,
         canvasContextAttributes: {
           preserveDrawingBuffer: true,
           antialias: true,
@@ -128,11 +131,14 @@ export function MapView({
     };
     map.on("click", onClick);
     map.on("mousemove", onMove);
+    map.on("resize", () => {
+      if (projectionRef.current === "flat") map.setMinZoom(singleWorldMinZoom(map));
+    });
     map.on("load", () => {
       if (cancelled) return;
       map.setProjection({ type: projection === "globe" ? "globe" : "mercator" });
-      map.setRenderWorldCopies(projection === "flat");
       map.resize();
+      holdSingleWorld(map, projection);
       decorateMap(map);
       setReady(true);
     });
@@ -154,7 +160,7 @@ export function MapView({
     const map = mapRef.current;
     if (!map) return;
     map.setProjection({ type: projection === "globe" ? "globe" : "mercator" });
-    map.setRenderWorldCopies(projection === "flat");
+    holdSingleWorld(map, projection);
     if (projection === "globe") {
       map.setSky({
         "sky-color": "#0B0C0E",
@@ -385,6 +391,37 @@ export function MapView({
       </div>
     </section>
   );
+}
+
+/** Full Mercator world, from the date line to the date line. */
+const WORLD_BOUNDS: [[number, number], [number, number]] = [
+  [-180, -85.051129],
+  [180, 85.051129],
+];
+
+/** Zoom at which one world is at least as wide and tall as the map. */
+function singleWorldMinZoom(map: MapLibreMap): number {
+  const { clientWidth, clientHeight } = map.getContainer();
+  const span = Math.max(clientWidth, clientHeight, 1);
+  return Math.log2(span / 512);
+}
+
+/**
+ * Flat view keeps a single world. Copies would paint the origin, the ring,
+ * and every line a second time. The minimum zoom fills the view so the
+ * date-line edges are not empty margins, and the bounds stop a pan from
+ * sliding into that empty space. Rings that cross the date line are already
+ * split, so each piece stays inside this one world and meets at ±180.
+ */
+function holdSingleWorld(map: MapLibreMap, projection: ProjectionMode) {
+  map.setRenderWorldCopies(false);
+  if (projection !== "flat") {
+    map.setMaxBounds(null);
+    map.setMinZoom(0);
+    return;
+  }
+  map.setMinZoom(singleWorldMinZoom(map));
+  map.setMaxBounds(WORLD_BOUNDS);
 }
 
 function nearestMatchId(
