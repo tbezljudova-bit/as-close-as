@@ -48,7 +48,7 @@ Open [http://localhost:43123/as-close-as/](http://localhost:43123/as-close-as/).
 
 This map shows cities with 50,000+ people, plus every capital. For shorter trips, under 500 km, smaller towns of 5,000+ join in too. Distances are measured as the crow flies, in a straight line over the Earth's curve. City data comes from [GeoNames](https://www.geonames.org/) ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)).
 
-Every match is listed below. To keep the map readable, when there are more than 80 matches, lines are drawn to 80 of them, spread around the whole ring.
+Too many lines get messy, so we draw 80, spread around the ring. Every city is still in the list.
 
 ## License
 

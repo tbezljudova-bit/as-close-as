@@ -197,18 +197,14 @@ export function SidePanel({
             <span>
               <span className="num">{matches.length.toLocaleString("en-US")}</span>{" "}
               {matches.length === 1 ? "city" : "cities"}
+              {matches.length > LINE_CAP ? (
+                <span className="line-cap"> · lines to {LINE_CAP} of them</span>
+              ) : null}
             </span>
             <DataNote />
           </span>
           <span>Distance</span>
         </div>
-        {matches.length > LINE_CAP ? (
-          <p className="cap-note">
-            Every match is listed below. To keep the map readable, when there are more than{" "}
-            {LINE_CAP} matches, lines are drawn to {LINE_CAP} of them, spread around the whole
-            ring.
-          </p>
-        ) : null}
         {matches.length === 0 ? (
           <p className="empty-list">
             {invalidPair
@@ -328,7 +324,7 @@ function DataNote() {
       </button>
       {open ? (
         <span id="city-data-note" role="dialog" aria-label="About this list" className="data-note-popover">
-          <p className="data-note-card">
+          <span className="data-note-card">
             This map shows cities with 50,000+ people, plus every capital. For shorter trips,
             under 500 km, smaller towns of 5,000+ join in too. Distances are measured as the
             crow flies, in a straight line over the Earth's curve. City data comes from{" "}
@@ -336,7 +332,11 @@ function DataNote() {
               GeoNames
             </a>{" "}
             (CC BY 4.0).
-          </p>
+            <span className="data-note-lines">
+              Too many lines get messy, so we draw {LINE_CAP}, spread around the ring. Every city
+              is still in the list.
+            </span>
+          </span>
         </span>
       ) : null}
     </span>

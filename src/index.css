@@ -218,7 +218,6 @@ body {
 
 .list-toolbar,
 .list-head,
-.cap-note,
 .empty-list {
   padding-left: 24px;
   padding-right: 24px;
@@ -253,6 +252,12 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+}
+
+.line-cap {
+  font-size: 11px;
+  font-weight: 450;
+  color: var(--color-muted);
 }
 
 .data-note {
@@ -299,6 +304,7 @@ body {
 }
 
 .data-note-card {
+  display: block;
   margin: 0;
   padding: 8px 12px;
   border: 1px solid var(--color-line);
@@ -312,25 +318,21 @@ body {
   letter-spacing: -0.011em;
 }
 
+.data-note-lines {
+  display: block;
+  margin-top: 8px;
+}
+
 .data-note-card a {
   color: var(--color-paper);
 }
 
-.cap-note,
 .empty-list {
   margin: 0;
+  padding-top: 16px;
   color: var(--color-muted);
   font-size: 13px;
   line-height: 1.45;
-}
-
-.cap-note {
-  padding-top: 8px;
-  padding-bottom: 4px;
-}
-
-.empty-list {
-  padding-top: 16px;
 }
 
 .city-list {
