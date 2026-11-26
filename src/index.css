@@ -218,7 +218,6 @@ body {
 
 .list-toolbar,
 .list-head,
-.cap-note,
 .empty-list {
   padding-left: 24px;
   padding-right: 24px;
@@ -316,17 +315,12 @@ body {
   color: var(--color-paper);
 }
 
-.cap-note,
 .empty-list {
   margin: 0;
+  padding-top: 16px;
   color: var(--color-muted);
   font-size: 13px;
   line-height: 1.45;
-}
-
-.empty-list,
-.cap-note {
-  padding-top: 16px;
 }
 
 .city-list {

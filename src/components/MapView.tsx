@@ -12,7 +12,6 @@ import {
   buildRingFeatures,
 } from "../lib/features";
 import { boundsForRing } from "../lib/geo";
-import { matchesForLines } from "../lib/match";
 import type { City, LatLon, Match, ProjectionMode, Unit } from "../lib/types";
 import { MAP_GLOW, cityHalo } from "../map/glow";
 import { baseStyle, decorateMap, setGeo } from "../map/style";
@@ -178,8 +177,7 @@ export function MapView({
       "rings",
       radiusKm > 1 ? buildRingFeatures(origin, radiusKm, tolerance) : { type: "FeatureCollection", features: [] },
     );
-    const lined = matchesForLines(matches, selected?.city.id ?? null);
-    const arcs = buildArcFeatures(origin, lined, selected?.city.id ?? null);
+    const arcs = buildArcFeatures(origin, matches, selected?.city.id ?? null);
     setGeo(map, "arcs", arcs.lines);
     setGeo(map, "arrows", arcs.arrows);
     setGeo(map, "matches", buildMatchPoints(matches, selected?.city.id ?? null));

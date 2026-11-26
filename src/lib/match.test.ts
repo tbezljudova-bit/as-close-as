@@ -5,10 +5,9 @@ import {
   citiesForRadius,
   isWithinTolerance,
   matchCities,
-  matchesForLines,
   sortMatches,
 } from "./match";
-import type { City, Match } from "./types";
+import type { City } from "./types";
 
 const origin: City = {
   id: 1,
@@ -136,22 +135,3 @@ describe("citiesForRadius", () => {
   });
 });
 
-describe("matchesForLines", () => {
-  it("caps the drawn lines and still keeps the selected city", () => {
-    const matches: Match[] = Array.from({ length: 100 }, (_, index) => {
-      const city = cityAt(100 + index, index, 1000, 1000 - index, `City ${index}`);
-      const deltaRatio = index / 10_000;
-      return {
-        city,
-        distanceKm: 1000 * (1 + deltaRatio),
-        deltaKm: 1000 * deltaRatio,
-        deltaRatio,
-      };
-    });
-    const selected = matches[90];
-    const lined = matchesForLines(matches, selected?.city.id ?? null);
-    expect(lined).toHaveLength(80);
-    expect(lined.some((match) => match.city.id === selected?.city.id)).toBe(true);
-    expect(matchesForLines(matches.slice(0, 10), null)).toHaveLength(10);
-  });
-});

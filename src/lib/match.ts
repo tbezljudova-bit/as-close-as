@@ -63,20 +63,3 @@ export function sortMatches(matches: Match[], sortKey: SortKey): Match[] {
   );
   return sorted;
 }
-
-/** Lines stay readable when a wide band lights up hundreds of cities. */
-export const LINE_CAP = 80;
-
-export function matchesForLines(
-  matches: Match[],
-  selectedId: number | null,
-): Match[] {
-  if (matches.length <= LINE_CAP) return matches;
-  const closest = sortMatches(matches, "closeness").slice(0, LINE_CAP);
-  if (selectedId == null || closest.some((match) => match.city.id === selectedId)) {
-    return closest;
-  }
-  const selected = matches.find((match) => match.city.id === selectedId);
-  if (!selected) return closest;
-  return [...closest.slice(0, LINE_CAP - 1), selected];
-}

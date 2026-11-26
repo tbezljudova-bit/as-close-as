@@ -113,6 +113,30 @@ describe("great circle arcs", () => {
     expect(line.length).toBe(25);
   });
 
+  it("keeps both ends of an arc that crosses the antimeridian", () => {
+    const beijing = { lat: 39.9075, lon: 116.3972 };
+    const whitehorse = { lat: 60.7216, lon: -135.0568 };
+    const cairns = { lat: -16.923, lon: 145.7661 };
+    const pacific = arcLines(beijing, whitehorse, 48);
+    const south = arcLines(beijing, cairns, 48);
+    expect(pacific.length).toBeGreaterThan(1);
+    expect(south).toHaveLength(1);
+    expect(pacific[0]?.[0]?.[0]).toBeCloseTo(beijing.lon, 4);
+    expect(pacific.at(-1)?.at(-1)?.[0]).toBeCloseTo(whitehorse.lon, 4);
+    expect(south[0]?.at(-1)?.[0]).toBeCloseTo(cairns.lon, 4);
+    for (const parts of [pacific, south]) {
+      for (const part of parts) {
+        expect(part.length).toBeGreaterThanOrEqual(2);
+        for (let index = 1; index < part.length; index += 1) {
+          const previous = part[index - 1];
+          const current = part[index];
+          if (!previous || !current) continue;
+          expect(Math.abs(current[0] - previous[0])).toBeLessThanOrEqual(180);
+        }
+      }
+    }
+  });
+
   it("places an arrow before the destination, pointing along the arc", () => {
     const arrow = arrowPlacement(tallinn, yerevan);
     const endBearing = initialBearing(

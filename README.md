@@ -46,15 +46,7 @@ Open [http://localhost:43123/as-close-as/](http://localhost:43123/as-close-as/).
 
 ## Data and limitations
 
-Cities with 50,000 or more people, plus national capitals and first-order administrative capitals of at least 20,000, come from GeoNames cities15000. For distances under 500 km, towns with 5,000 or more people are included too, from GeoNames cities5000. Districts and localities (feature codes PPLX and PPLL) are left out, so a city is not listed twice. Longer rings stay on the larger-city set, so a continent-scale circle does not fill up with every small town along it.
-
-A place matches when its great-circle distance sits inside the tolerance of the target distance. The default band is ±3%, and the slider can widen or narrow it. The distance is straight-line over the sphere, not a road, a flight, or a ruler line on the flat map.
-
-Sparse regions show few matches because few places in this set sit there. A ring over the Arctic or an ocean can cross almost no cities, even when the band is wide.
-
-The main list is about 12,120 cities. The short-ring towns are a separate file of about 51,800 places, 2.7 MB raw and about 1.2 MB gzipped, and the app loads that file only when the ring is under 500 km.
-
-Data: [GeoNames](https://www.geonames.org/), [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Coastlines and country shapes are Natural Earth, via [world-atlas](https://github.com/topojson/world-atlas) (public domain), drawn with [MapLibre GL JS](https://maplibre.org/).
+This map shows cities with 50,000+ people, plus every capital. For shorter trips, under 500 km, smaller towns of 5,000+ join in too. Distances are measured as the crow flies, in a straight line over the Earth's curve. City data comes from [GeoNames](https://www.geonames.org/) ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)).
 
 ## Roadmap
 

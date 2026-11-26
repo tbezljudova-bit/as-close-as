@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { LINE_CAP } from "../lib/match";
 import { formatBand, formatDelta, formatDistance, formatPopulation } from "../lib/format";
 import type { SentenceModel } from "../lib/sentence";
 import type { City, CompareMode, Match, SortKey, Unit } from "../lib/types";
@@ -202,12 +201,6 @@ export function SidePanel({
           </span>
           <span>Distance</span>
         </div>
-        {matches.length > LINE_CAP ? (
-          <p className="cap-note">
-            Every match is listed. Lines on the map show the {LINE_CAP} cities closest
-            to the exact radius.
-          </p>
-        ) : null}
         {matches.length === 0 ? (
           <p className="empty-list">
             {invalidPair
@@ -328,8 +321,9 @@ function DataNote() {
       {open ? (
         <span id="city-data-note" role="dialog" aria-label="About this list" className="data-note-popover">
           <p className="data-note-card">
-            Cities with 50,000+ people and capitals. For distances under 500 km, towns with
-            5,000+ people are included too. Distances are straight-line (great-circle). Data:{" "}
+            This map shows cities with 50,000+ people, plus every capital. For shorter trips,
+            under 500 km, smaller towns of 5,000+ join in too. Distances are measured as the
+            crow flies, in a straight line over the Earth's curve. City data comes from{" "}
             <a href="https://www.geonames.org/" target="_blank" rel="noreferrer">
               GeoNames
             </a>{" "}
