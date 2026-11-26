@@ -1,10 +1,10 @@
 # As Close As
 
-Tallinn is as close to Yerevan (≈ 2,547 km) as it is to Adana, Barcelona, Antalya, and Malatya.
+Tallinn is about as far from Yerevan (≈ 2,547 km) as it is from Adana, Barcelona, Antalya and Malatya. Surprising, right?
 
-As Close As is a small map for that kind of question. Pick a city, set a distance (or a second city), and it draws the true circle of places that far away. Cities on the ring light up. The rest stay dim. Choose one and it rises off the map, with the route from the origin drawn brighter than the others.
+As Close As is a small map for questions like that. Pick a city, then a second city or a distance, and it draws every place that's the same distance away. Matching cities light up along the ring. Tap one to see its route highlighted in yellow.
 
-The app opens on a globe. The flat Mercator map is the other toggle, for when you want to see that same ring stretched.
+It opens on a globe, where the ring is a true circle. Switch to the flat map to see the same ring stretched by the projection.
 
 The live map is at [https://tbezljudova-bit.github.io/as-close-as/](https://tbezljudova-bit.github.io/as-close-as/).
 
