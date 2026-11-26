@@ -10,6 +10,14 @@ export function isWithinTolerance(
   return Math.abs(distanceKm - radiusKm) / radiusKm <= tolerance;
 }
 
+/** Rings shorter than this also match towns of 5,000 people or more. */
+export const SHORT_RING_KM = 500;
+
+export function citiesForRadius(radiusKm: number, major: City[], towns: City[]): City[] {
+  if (!(radiusKm > 0) || radiusKm >= SHORT_RING_KM || towns.length === 0) return major;
+  return major.concat(towns);
+}
+
 export function matchCities(args: {
   cities: City[];
   origin: City;

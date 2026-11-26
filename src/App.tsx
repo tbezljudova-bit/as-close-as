@@ -4,7 +4,8 @@ import { SidePanel } from "./components/SidePanel";
 import { cities, defaultOrigin, defaultTarget, findCityById } from "./lib/cities";
 import { formatDistanceNumber, toKm } from "./lib/format";
 import { haversineKm } from "./lib/geo";
-import { matchCities, sortMatches } from "./lib/match";
+import { citiesForRadius, matchCities, SHORT_RING_KM, sortMatches } from "./lib/match";
+import { loadTowns } from "./lib/towns";
 import { buildSentence } from "./lib/sentence";
 import { projectionFromParam, projectionParam } from "./lib/view";
 import type {
@@ -89,6 +90,7 @@ export default function App() {
   const [selectedId, setSelectedId] = useState<number | null>(initial.selectedId);
   const [riseNonce, setRiseNonce] = useState(0);
   const [mapReady, setMapReady] = useState(false);
+  const [towns, setTowns] = useState<City[]>([]);
 
   const invalidPair = mode === "city" && origin.id === target.id;
   const radiusKm = invalidPair
@@ -97,17 +99,38 @@ export default function App() {
       ? haversineKm(origin, target)
       : distanceKm;
   const tolerance = tolerancePct / 100;
+  const shortRing = radiusKm > 0 && radiusKm < SHORT_RING_KM;
+
+  useEffect(() => {
+    if (!shortRing || towns.length > 0) return;
+    let cancelled = false;
+    loadTowns()
+      .then((rows) => {
+        if (!cancelled) setTowns(rows);
+      })
+      .catch(() => {
+        // A failed town file leaves the 50,000+ set in place.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [shortRing, towns.length]);
+
+  const pool = useMemo(
+    () => citiesForRadius(radiusKm, cities, towns),
+    [radiusKm, towns],
+  );
 
   const rawMatches = useMemo(() => {
     if (!(radiusKm > 0)) return [];
     return matchCities({
-      cities,
+      cities: pool,
       origin,
       radiusKm,
       tolerance,
       excludeIds: mode === "city" ? [target.id] : [],
     });
-  }, [origin, radiusKm, tolerance, mode, target.id]);
+  }, [pool, origin, radiusKm, tolerance, mode, target.id]);
 
   const matches = useMemo(
     () => sortMatches(rawMatches, sortKey),

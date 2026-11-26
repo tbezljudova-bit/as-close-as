@@ -198,6 +198,14 @@ export function SidePanel({
           </span>
           <span>Distance</span>
         </div>
+        <p className="data-note">
+          Cities with 50,000+ people and capitals. For distances under 500 km, towns with
+          5,000+ people are included too. Distances are straight-line (great-circle). Data:{" "}
+          <a href="https://www.geonames.org/" target="_blank" rel="noreferrer">
+            GeoNames
+          </a>{" "}
+          (CC BY 4.0).
+        </p>
         {matches.length > LINE_CAP ? (
           <p className="cap-note">
             Every match is listed. Lines on the map show the {LINE_CAP} cities closest

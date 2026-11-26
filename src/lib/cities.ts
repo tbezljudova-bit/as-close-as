@@ -15,7 +15,7 @@ type CityRow = [
 
 const countries = countryNames as Record<string, string>;
 
-function loadCities(raw: string): City[] {
+export function parseCityRows(raw: string): City[] {
   const parsed: unknown = JSON.parse(raw);
   if (!Array.isArray(parsed)) throw new Error("City data is not a list.");
   return parsed.map((row) => {
@@ -42,7 +42,7 @@ function loadCities(raw: string): City[] {
   });
 }
 
-export const cities: City[] = loadCities(rawRows);
+export const cities: City[] = parseCityRows(rawRows);
 
 const byId = new Map<number, City>(cities.map((city) => [city.id, city]));
 

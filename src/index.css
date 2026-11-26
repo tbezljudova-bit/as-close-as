@@ -246,6 +246,19 @@ body {
   border-bottom: 1px solid var(--color-line);
 }
 
+.data-note {
+  margin: 0;
+  padding: 8px 24px 8px;
+  color: var(--color-muted);
+  font-size: 12px;
+  line-height: 1.45;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.data-note a {
+  color: var(--color-paper);
+}
+
 .cap-note,
 .empty-list {
   margin: 0;

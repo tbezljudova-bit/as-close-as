@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { destinationPoint } from "./geo";
 import {
+  SHORT_RING_KM,
+  citiesForRadius,
   isWithinTolerance,
   matchCities,
   matchesForLines,
@@ -117,6 +119,20 @@ describe("sortMatches", () => {
       "Small",
       "Large",
     ]);
+  });
+});
+
+describe("citiesForRadius", () => {
+  const major = [origin];
+  const towns = [cityAt(2, 10, 100, 8_000, "Town")];
+
+  it("adds towns only under 500 km", () => {
+    expect(SHORT_RING_KM).toBe(500);
+    expect(citiesForRadius(163, major, towns)).toHaveLength(2);
+    expect(citiesForRadius(499.9, major, towns)).toHaveLength(2);
+    expect(citiesForRadius(500, major, towns)).toBe(major);
+    expect(citiesForRadius(2547, major, towns)).toBe(major);
+    expect(citiesForRadius(163, major, [])).toBe(major);
   });
 });
 

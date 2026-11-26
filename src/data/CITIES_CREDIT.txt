@@ -1,7 +1,9 @@
-City coordinates, names, and population are a trimmed subset of GeoNames cities15000.
-Kept rows: population of 50,000 or more, every national capital, and first-order
-administrative capitals of 20,000 people or more. City sections and localities
-(GeoNames PPLX and PPLL) are left out so districts do not double-count a city.
+City coordinates, names, and population are a trimmed subset of GeoNames.
+The main list is cities15000, keeping population of 50,000 or more, every national
+capital, and first-order administrative capitals of 20,000 people or more.
+towns.json is cities5000 places of 5,000 or more that are not already in that list.
+City sections and localities (GeoNames PPLX and PPLL) are left out.
+Short rings, under 500 km, match both files. Longer rings use the main list only.
 Source: https://www.geonames.org/
 License: Creative Commons Attribution 4.0 (CC BY 4.0)
 https://creativecommons.org/licenses/by/4.0/
